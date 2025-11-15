@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.polarion.eclipse.team.svn.connector.javahl21.feature"
+      label="Subversive SVN 1.14 JavaHL Connector"
+      version="7.0.0.qualifier"
+      provider-name="Polarion Software">
+
+   <description>
+      JavaHL 1.14.x connector for Eclipse Subversive SVN integration.
+      Provides native SVN client implementation for Windows x64 platforms.
+   </description>
+
+   <copyright>
+      Copyright (c) 2005-2025 Polarion Software. All rights reserved.
+   </copyright>
+
+   <license url="https://www.eclipse.org/legal/epl-2.0/">
+      Eclipse Public License - v 2.0
+
+THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS ECLIPSE
+PUBLIC LICENSE (&quot;AGREEMENT&quot;). ANY USE, REPRODUCTION OR DISTRIBUTION
+OF THE PROGRAM CONSTITUTES RECIPIENT&apos;S ACCEPTANCE OF THIS AGREEMENT.
+
+1. DEFINITIONS
+
+&quot;Contribution&quot; means:
+
+a) in the case of the initial Contributor, the initial content
+   Distributed under this Agreement, and
+
+b) in the case of each subsequent Contributor:
+   i) changes to the Program, and
+   ii) additions to the Program;
+   where such changes and/or additions to the Program originate from
+   and are Distributed by that particular Contributor. A Contribution
+   &apos;originates&apos; from a Contributor if it was added to the Program by
+   such Contributor itself or anyone acting on such Contributor&apos;s behalf.
+   Contributions do not include changes or additions to the Program that
+   are not Modified Works.
+
+Full license text available at: https://www.eclipse.org/legal/epl-2.0/
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime" version="3.20.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.team.svn.core" version="4.0.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="org.polarion.eclipse.team.svn.connector.javahl21"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.polarion.eclipse.team.svn.connector.javahl21.win64"
+         os="win32"
+         arch="x86_64"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+</feature>

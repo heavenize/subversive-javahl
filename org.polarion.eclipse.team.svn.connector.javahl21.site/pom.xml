@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.polarion.eclipse.team.svn.connector</groupId>
+    <artifactId>org.polarion.eclipse.team.svn.connector.javahl21.site</artifactId>
+    <version>7.0.0-SNAPSHOT</version>
+    <packaging>eclipse-repository</packaging>
+
+    <name>Subversive SVN JavaHL Connector Update Site</name>
+    <description>P2 update site for JavaHL 1.14 connector</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <tycho.version>4.0.10</tycho.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>eclipse-2024-12</id>
+            <layout>p2</layout>
+            <url>https://download.eclipse.org/releases/2024-12</url>
+        </repository>
+        <repository>
+            <id>subversive</id>
+            <layout>p2</layout>
+            <url>https://download.eclipse.org/technology/subversive/updates/release/latest</url>
+        </repository>
+        <repository>
+            <id>eclipse-license</id>
+            <layout>p2</layout>
+            <url>https://download.eclipse.org/cbi/updates/license</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-maven-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <extensions>true</extensions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-p2-repository-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                    <includeAllDependencies>false</includeAllDependencies>
+                    <compress>true</compress>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-p2-director-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <executions>
+                    <execution>
+                        <id>create-distributions</id>
+                        <goals>
+                            <goal>archive-products</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <formats>
+                        <win32>zip</win32>
+                        <linux>tar.gz</linux>
+                        <macosx>tar.gz</macosx>
+                    </formats>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

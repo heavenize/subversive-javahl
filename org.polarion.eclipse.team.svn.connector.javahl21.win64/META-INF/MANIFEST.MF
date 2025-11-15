@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Subversive SVN 1.14 JavaHL Connector - Windows x64 Native Libraries
+Bundle-SymbolicName: org.polarion.eclipse.team.svn.connector.javahl21.win64;singleton:=true
+Bundle-Version: 7.0.0.qualifier
+Bundle-Vendor: Polarion Software
+Fragment-Host: org.polarion.eclipse.team.svn.connector.javahl21;bundle-version="7.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Eclipse-PlatformFilter: (& (osgi.os=win32) (osgi.arch=x86_64))
+Eclipse-BundleShape: dir
+Bundle-License: EPL-2.0
+Bundle-Copyright: Copyright (c) 2005-2025 Polarion Software. All rights reserved.
+Automatic-Module-Name: org.polarion.eclipse.team.svn.connector.javahl21.win64

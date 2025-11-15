@@ -1,0 +1,48 @@
+# Maven build output
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse/Tycho build artifacts
+bin/
+.settings/
+.project
+.classpath
+.metadata/
+
+# Generated P2 repository files
+*.jar
+!lib/**/*.jar
+!lib-static/**/*.jar
+
+# Specific generated artifacts
+org.polarion.eclipse.team.svn.connector.javahl21.site-*.zip
+*.zip
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+*.iml
+.idea/
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp

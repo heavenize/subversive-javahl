@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="Subversive SVN JavaHL Connector Update Site" url="https://github.com/polarion/svn-javahl-connector">
+      JavaHL 1.14.x connector for Eclipse Subversive SVN integration.
+      Provides native SVN client implementation for Windows x64 platforms.
+   </description>
+   
+   <feature url="features/org.polarion.eclipse.team.svn.connector.javahl21.feature_7.0.0.qualifier.jar" 
+            id="org.polarion.eclipse.team.svn.connector.javahl21.feature" 
+            version="7.0.0.qualifier">
+      <category name="svn-connectors"/>
+   </feature>
+   
+   <category-def name="svn-connectors" label="SVN Connectors">
+      <description>
+         Subversion connectors for Eclipse Subversive
+      </description>
+   </category-def>
+</site>
