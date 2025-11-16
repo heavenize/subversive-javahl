@@ -3,8 +3,8 @@
 ## ✅ Successfully Configured
 
 1. **Java 21** - Detected and configured
-   - Location: `C:\Program Files\Java\jdk-21`
-   - Version: 21.0.4
+   - Location: `<java-home>` (e.g., `C:\Program Files\Eclipse Adoptium\jdk-21.x.x`)
+   - Version: 21.0.4+
 
 2. **Maven 3.9.11** - Installed and working
    - All Tycho dependencies downloaded successfully

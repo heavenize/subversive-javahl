@@ -74,45 +74,50 @@ org.polarion.eclipse.team.svn.connector.javahl21.win64/native/
 If you already have Apache Subversion 1.14 installed on Windows:
 
 ### Step 1: Locate Installation Directory
-Typical installation paths:
-- `C:\Program Files\Subversion\`
-- `C:\Program Files\SlikSvn\`
-- `C:\Program Files\VisualSVN Server\`
-- `C:\Program Files (x86)\CollabNet\`
+Typical installation paths (set `<svn-install>` to your path):
+- `<svn-install>` = `C:\Program Files\Subversion\` (most common)
+- `<svn-install>` = `C:\Program Files\SlikSvn\`
+- `<svn-install>` = `C:\Program Files\VisualSVN Server\`
+- `<svn-install>` = `C:\Program Files (x86)\CollabNet\`
+
+*See LOCAL_PATHS.md (if available) for your specific installation path.*
 
 ### Step 2: Navigate to bin Directory
 ```powershell
-cd "C:\Program Files\Subversion\bin"
+cd "<svn-install>\bin"
 ```
 
 ### Step 3: Copy DLLs
 ```powershell
-# Navigate to fragment bundle directory
-cd "D:\users\Jose\development\polarion-javahl\org.polarion.eclipse.team.svn.connector.javahl21.win64\native"
+# Navigate to fragment bundle directory (replace <workspace> with your project path)
+cd "<workspace>\org.polarion.eclipse.team.svn.connector.javahl21.win64\native"
 
-# Copy VC++ Runtime
-Copy-Item "C:\Windows\System32\VCRUNTIME140.dll" .
-Copy-Item "C:\Windows\System32\MSVCP140.dll" .
+# Copy VC++ Runtime from Windows System32
+Copy-Item "<system32>\VCRUNTIME140.dll" .
+Copy-Item "<system32>\MSVCP140.dll" .
 
-# Copy Subversion and dependencies
-Copy-Item "C:\Program Files\Subversion\bin\libapr-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libapriconv-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libaprutil-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libcrypto-1_1-x64.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libssl-1_1-x64.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsasl.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsvn_client-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsvn_delta-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsvn_diff-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsvn_fs-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsvn_ra-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsvn_repos-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsvn_subr-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsvn_wc-1.dll" .
-Copy-Item "C:\Program Files\Subversion\bin\libsvnjavahl-1.dll" .
+# Copy Subversion and dependencies (replace <svn-install> with your SVN path)
+Copy-Item "<svn-install>\bin\libapr-1.dll" .
+Copy-Item "<svn-install>\bin\libapriconv-1.dll" .
+Copy-Item "<svn-install>\bin\libaprutil-1.dll" .
+Copy-Item "<svn-install>\bin\libcrypto-1_1-x64.dll" .
+Copy-Item "<svn-install>\bin\libssl-1_1-x64.dll" .
+Copy-Item "<svn-install>\bin\libsasl.dll" .
+Copy-Item "<svn-install>\bin\libsvn_client-1.dll" .
+Copy-Item "<svn-install>\bin\libsvn_delta-1.dll" .
+Copy-Item "<svn-install>\bin\libsvn_diff-1.dll" .
+Copy-Item "<svn-install>\bin\libsvn_fs-1.dll" .
+Copy-Item "<svn-install>\bin\libsvn_ra-1.dll" .
+Copy-Item "<svn-install>\bin\libsvn_repos-1.dll" .
+Copy-Item "<svn-install>\bin\libsvn_subr-1.dll" .
+Copy-Item "<svn-install>\bin\libsvn_wc-1.dll" .
+Copy-Item "<svn-install>\bin\libsvnjavahl-1.dll" .
 ```
 
-**Note**: Adjust paths based on your actual Subversion installation location.
+**Note**: Replace placeholders with your actual paths:
+- `<workspace>` = Your project directory
+- `<svn-install>` = Your Subversion installation (e.g., `C:\Program Files\Subversion`)
+- `<system32>` = `C:\Windows\System32` (standard location)
 
 ---
 

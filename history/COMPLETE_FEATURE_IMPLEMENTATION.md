@@ -10,7 +10,8 @@
 
 This connector now has **100% feature parity** with Apache Subversion 1.14.5 JavaHL bindings. All classes, interfaces, callbacks, and native methods from the reference implementation have been successfully implemented.
 
-**Source Reference:** `D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src`
+**Source Reference:** Download SVN 1.14.5 source from https://subversion.apache.org/download/  
+Path: `<svn-source>\subversion\bindings\javahl\src` (set in LOCAL_PATHS.md)
 
 ---
 
@@ -396,8 +397,10 @@ Specifies mergeinfo inheritance behavior
 
 1. **Update Site Location:**
    ```
-   file:///d:/users/Jose/development/polarion-javahl/org.polarion.eclipse.team.svn.connector.javahl21.site/target/repository
+   file:///<workspace>/org.polarion.eclipse.team.svn.connector.javahl21.site/target/repository
    ```
+   
+   *Note: Replace `<workspace>` with your project directory (use forward slashes for file:// URLs).*
 
 2. **In Eclipse:**
    - Help → Install New Software → Add...

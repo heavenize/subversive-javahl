@@ -148,10 +148,11 @@ Configured in `build.properties`:
 - **Solution**: Ensure you're using JDK 21 (not older versions)
 
 **Issue**: `JAVA_HOME not set`
-- **Solution**: Set environment variable:
+- **Solution**: Set environment variable (replace `<java-home>` with your JDK path):
   ```powershell
-  $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.x.x"
+  $env:JAVA_HOME = "<java-home>"
   ```
+  Example: `$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.4.7-hotspot"`
 
 **Issue**: Maven build fails with target platform errors
 - **Solution**: Clear Maven cache and rebuild:
@@ -272,7 +273,9 @@ Third-party components:
 **For build issues:**
 - Verify JDK 21 and Maven 3.9+ installed
 - Clear Maven cache: `mvn clean install -U`
-- Check SVN reference source at: `D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src`
+- For signature verification: Compare with official Apache SVN 1.14.5 source code
+  - Download from: https://subversion.apache.org/download/
+  - Extract and reference JavaHL bindings: `<svn-source>/subversion/bindings/javahl/src`
 
 ## References
 
@@ -280,6 +283,7 @@ Third-party components:
   - [Project Summary](../PROJECT_SUMMARY.md) - Complete overview
   - [Maintenance Guide](../MAINTENANCE_GUIDE.md) - Technical reference
   - [Installation Guide](../INSTALLATION_GUIDE.md) - User installation
+  - LOCAL_PATHS.md (local only) - Your development paths
   
 - **External Resources:**
   - Apache Subversion: https://subversion.apache.org/

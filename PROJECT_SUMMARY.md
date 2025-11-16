@@ -296,10 +296,11 @@ polarion-javahl/
 
 1. **Locate Update Site:**
    ```
-   D:\users\Jose\development\polarion-javahl\
-   org.polarion.eclipse.team.svn.connector.javahl21.site\target\
+   <workspace>/org.polarion.eclipse.team.svn.connector.javahl21.site/target/
    org.polarion.eclipse.team.svn.connector.javahl21.site-7.0.0-SNAPSHOT.zip
    ```
+   
+   *Note: Replace `<workspace>` with your project directory. See LOCAL_PATHS.md (local only) for your specific path.*
 
 2. **Install in Eclipse:**
    - Help → Install New Software → Add → Archive
@@ -340,9 +341,11 @@ polarion-javahl/
 
 ### Quick Build
 ```powershell
-cd d:\users\Jose\development\polarion-javahl
+cd <workspace>
 mvn clean package -DskipTests
 ```
+
+*Note: Replace `<workspace>` with your project directory path.*
 
 ### Build Output Locations
 - **Main Plugin JAR:** `org.polarion.eclipse.team.svn.connector.javahl21\target\org.polarion.eclipse.team.svn.connector.javahl21-7.0.0-SNAPSHOT.jar`
@@ -456,9 +459,11 @@ All license files included in `about_files/` directory.
 - `INSTALLATION_GUIDE.md` - Detailed installation instructions
 - `README.md` - Build instructions and prerequisites
 - `NATIVE_LIBRARY_GUIDE.md` - Native library acquisition guide
+- `LOCAL_PATHS.md` - Local development paths (not committed)
 
 ### Reference Sources
-- **SVN 1.14.5 Source:** `D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src`
+- **SVN 1.14.5 Source:** Download from https://subversion.apache.org/download/
+  - Extract and reference path as `<svn-source>` in documentation
 - **Eclipse Update Site:** https://download.eclipse.org/releases/2024-12
 - **Subversive Project:** https://www.eclipse.org/subversive/
 - **Apache Subversion:** https://subversion.apache.org/

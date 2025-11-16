@@ -10,6 +10,9 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
+# Local configuration (not committed)
+LOCAL_PATHS.md
+
 # Eclipse/Tycho build artifacts
 bin/
 .settings/

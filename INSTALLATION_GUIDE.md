@@ -28,8 +28,9 @@
 ### Step 1: Locate the ZIP file
 The update site is at:
 ```
-D:\users\Jose\development\polarion-javahl\org.polarion.eclipse.team.svn.connector.javahl21.site\target\org.polarion.eclipse.team.svn.connector.javahl21.site-7.0.0-SNAPSHOT.zip
+<workspace>\org.polarion.eclipse.team.svn.connector.javahl21.site\target\org.polarion.eclipse.team.svn.connector.javahl21.site-7.0.0-SNAPSHOT.zip
 ```
+*Replace `<workspace>` with your project directory. See LOCAL_PATHS.md for your local paths.*
 
 ### Step 2: Install in Eclipse
 
@@ -74,14 +75,16 @@ D:\users\Jose\development\polarion-javahl\org.polarion.eclipse.team.svn.connecto
 
 ```powershell
 # Navigate to your Eclipse installation
-cd "C:\Eclipse\plugins"
+cd "<eclipse-install>\plugins"
 
-# Copy both plugin JARs
-Copy-Item "D:\users\Jose\development\polarion-javahl\org.polarion.eclipse.team.svn.connector.javahl21\target\org.polarion.eclipse.team.svn.connector.javahl21-7.0.0-SNAPSHOT.jar" .
-Copy-Item "D:\users\Jose\development\polarion-javahl\org.polarion.eclipse.team.svn.connector.javahl21.win64\target\org.polarion.eclipse.team.svn.connector.javahl21.win64-7.0.0-SNAPSHOT.jar" .
+# Copy both plugin JARs (replace <workspace> with your project directory)
+Copy-Item "<workspace>\org.polarion.eclipse.team.svn.connector.javahl21\target\org.polarion.eclipse.team.svn.connector.javahl21-7.0.0-SNAPSHOT.jar" .
+Copy-Item "<workspace>\org.polarion.eclipse.team.svn.connector.javahl21.win64\target\org.polarion.eclipse.team.svn.connector.javahl21.win64-7.0.0-SNAPSHOT.jar" .
 
 # Restart Eclipse with clean flag
-eclipse.exe -clean
+<eclipse-install>\eclipse.exe -clean
+```
+*Set your local paths in LOCAL_PATHS.md*
 ```
 
 ---
@@ -157,8 +160,8 @@ Platform: win32/x86_64
    - Usually already installed on Windows 10/11
 3. **Verify Plugin Installation:**
    ```powershell
-   # Check both JARs are installed
-   Get-ChildItem "C:\Eclipse\plugins\org.polarion.eclipse.team.svn.connector.javahl21*"
+   # Check both JARs are installed (replace <eclipse-install> with your Eclipse directory)
+   Get-ChildItem "<eclipse-install>\plugins\org.polarion.eclipse.team.svn.connector.javahl21*"
    # Should show 2 files:
    # - org.polarion.eclipse.team.svn.connector.javahl21-7.0.0-*.jar
    # - org.polarion.eclipse.team.svn.connector.javahl21.win64-7.0.0-*.jar
@@ -293,8 +296,8 @@ Users can install via:
 ## Quick Start Commands
 
 ```powershell
-# Build everything
-cd D:\users\Jose\development\polarion-javahl
+# Build everything (replace <workspace> with your project directory)
+cd <workspace>
 .\build-updatesite.ps1
 
 # Locate ZIP

@@ -306,7 +306,9 @@ NativeException(String, String, Throwable, int)
 
 **Critical Rule:** When in doubt, check SVN 1.14.5 source code
 
-**Location:** `D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src`
+**Location:** Download from https://subversion.apache.org/download/ and extract
+- JavaHL bindings: `<svn-source>/subversion/bindings/javahl/src`
+- JNI native code: `<svn-source>/subversion/bindings/javahl/native`
 
 **Process:**
 1. Find the issue in our code
@@ -492,7 +494,8 @@ Support Classes: 16
 
 **SVN Reference Source:**
 - Apache Subversion 1.14.5 source code
-- Location: `D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src`
+- Download: https://subversion.apache.org/download/
+- JavaHL bindings used for verification
 
 **Build Environment:**
 - Java 21.0.4 (OpenJDK)

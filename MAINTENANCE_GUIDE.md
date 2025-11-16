@@ -286,7 +286,7 @@ mvn versions:commit  # or versions:revert to undo
 
 **Standard Build:**
 ```powershell
-cd d:\users\Jose\development\polarion-javahl
+cd <workspace>
 mvn clean package -DskipTests
 ```
 
@@ -294,6 +294,7 @@ mvn clean package -DskipTests
 ```powershell
 mvn clean package -U -DskipTests
 ```
+*Replace `<workspace>` with your project directory*
 
 **Fast Build (plugin only):**
 ```powershell
@@ -469,7 +470,9 @@ class NativeException {
 
 3. **Check SVN Source:**
    ```powershell
-   Get-Content "D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" | Select-String -Pattern "public.*void list"
+   # Download SVN 1.14.5 source from https://subversion.apache.org/download/
+   # Set $svnSource to your extracted location
+   Get-Content "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" | Select-String -Pattern "public.*void list"
    ```
 
 4. **Compare Signatures:**
@@ -494,7 +497,7 @@ Select-String -Path "org.polarion.eclipse.team.svn.connector.javahl21\src\org\ap
 **Compare with SVN Source:**
 ```powershell
 $ourFile = "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\SVNClient.java"
-$refFile = "D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java"
+$refFile = "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java"
 
 # Compare method signatures
 Compare-Object (Select-String -Path $ourFile -Pattern "public native") (Select-String -Path $refFile -Pattern "public native")
@@ -508,7 +511,8 @@ Compare-Object (Select-String -Path $ourFile -Pattern "public native") (Select-S
 
 1. **Check SVN Source:**
    ```powershell
-   Get-Content "D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" | Select-String -Pattern "methodName"
+   # Download SVN source from https://subversion.apache.org/download/
+   Get-Content "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" | Select-String -Pattern "methodName"
    ```
 
 2. **Add to SVNClient.java:**
@@ -590,16 +594,20 @@ public void vacuum(String wcPath, boolean removeUnversioned,
 
 #### Step 1: Get New Source
 ```powershell
-cd D:\Work\code
+# Download new SVN version from https://subversion.apache.org/download/
+# Or clone from repository:
+cd <your-source-directory>
 git clone --branch 1.15.0 https://github.com/apache/subversion subversion-1.15.0
 cd subversion-1.15.0\subversion\bindings\javahl\src
 ```
 
 #### Step 2: Compare Source
 ```powershell
-# Compare SVNClient.java
-code --diff "D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" "D:\Work\code\subversion-1.15.0\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java"
+# Compare SVNClient.java (replace <svn-source-old> and <svn-source-new> with your paths)
+code --diff "<svn-source-old>\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" "<svn-source-new>\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java"
 ```
+
+*Note: Set your SVN source paths in LOCAL_PATHS.md*
 
 #### Step 3: Identify Changes
 Look for:
@@ -736,11 +744,11 @@ java.lang.UnsatisfiedLinkError: no svnjavahl-1 in java.library.path
 Expand-Archive "org.polarion.eclipse.team.svn.connector.javahl21.win64-*.jar" -DestinationPath temp
 Get-ChildItem temp\native\*.dll
 
-# Check Eclipse plugins folder
-Get-ChildItem "C:\Eclipse\plugins\org.polarion.eclipse.team.svn.connector.javahl21*"
+# Check Eclipse plugins folder (replace <eclipse-install> with your Eclipse directory)
+Get-ChildItem "<eclipse-install>\plugins\org.polarion.eclipse.team.svn.connector.javahl21*"
 
 # Restart Eclipse with -clean
-eclipse.exe -clean
+<eclipse-install>\eclipse.exe -clean
 ```
 
 ### Problem: NoSuchMethodError
@@ -759,7 +767,8 @@ java.lang.NoSuchMethodError: org.apache.subversion.javahl.SVNClient.someMethod(.
 **Solutions:**
 1. Compare with SVN source:
    ```powershell
-   Get-Content "D:\Work\code\subversion-1.14.5\...\SVNClient.java" | Select-String -Pattern "someMethod"
+   # Download SVN source from https://subversion.apache.org/download/
+   Get-Content "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" | Select-String -Pattern "someMethod"
    ```
 
 2. Check parameter types exactly:
@@ -923,8 +932,8 @@ mvn verify -Dtest.repo.url=file:///path/to/test-repo
 # Our implementation
 (Get-ChildItem -Recurse "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\*.java").Count
 
-# SVN source
-(Get-ChildItem -Recurse "D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\org\apache\subversion\javahl\*.java").Count
+# SVN source (download from https://subversion.apache.org/download/)
+(Get-ChildItem -Recurse "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\*.java").Count
 ```
 
 **2. Compare Native Method Count:**
@@ -939,8 +948,8 @@ Get-ChildItem "...\src\org\apache\subversion\javahl\callback\*.java" | Select-Ob
 
 **4. Check for Missing Classes:**
 ```powershell
-# Compare directories
-Compare-Object -ReferenceObject (Get-ChildItem "D:\Work\code\subversion-1.14.5\...\javahl\src\org\apache\subversion\javahl\types\*.java").Name -DifferenceObject (Get-ChildItem "...\src\org\apache\subversion\javahl\types\*.java").Name
+# Compare directories (download SVN source from https://subversion.apache.org/download/)
+Compare-Object -ReferenceObject (Get-ChildItem "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\types\*.java").Name -DifferenceObject (Get-ChildItem "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\types\*.java").Name
 ```
 
 ---
@@ -969,7 +978,7 @@ Source:     org.polarion.eclipse.team.svn.connector.javahl21/src/
 Native DLLs: org.polarion.eclipse.team.svn.connector.javahl21.win64/native/
 Build Output: */target/
 Update Site: org.polarion.eclipse.team.svn.connector.javahl21.site/target/repository/
-SVN Reference: D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\
+SVN Reference: Download from https://subversion.apache.org/download/ (set path in LOCAL_PATHS.md)
 ```
 
 ### Key Classes
