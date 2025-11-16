@@ -98,4 +98,11 @@ public class NativeInputStream extends InputStream
     {
         this.cppAddr = cppAddr;
     }
+
+    private long getCppAddr()
+    {
+        return cppAddr;
+    }
+
+    public native void finalize();
 }

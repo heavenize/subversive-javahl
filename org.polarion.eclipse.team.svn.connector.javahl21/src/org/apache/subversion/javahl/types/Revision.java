@@ -23,6 +23,7 @@
 
 package org.apache.subversion.javahl.types;
 
+import java.lang.annotation.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -32,13 +33,9 @@ import java.util.Locale;
  */
 public class Revision implements java.io.Serializable
 {
-    // Update the serialVersionUID when there is a incompatible change
-    // made to this class.  See any of the following, depending upon
-    // the Java release.
-    // http://java.sun.com/j2se/1.3/docs/guide/serialization/spec/version.doc7.html
-    // http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf
-    // http://java.sun.com/j2se/1.5.0/docs/guide/serialization/spec/version.html#6678
-    // http://java.sun.com/javase/6/docs/platform/serialization/spec/version.html#6678
+    // Update the serialVersionUID when there is a incompatible change made to
+    // this class.  See the java documentation for when a change is incompatible.
+    // http://java.sun.com/javase/7/docs/platform/serialization/spec/version.html#6678
     private static final long serialVersionUID = 1L;
 
     /**
@@ -81,6 +78,7 @@ public class Revision implements java.io.Serializable
             case head : return "HEAD";
             case previous : return "PREV";
             case working : return "WORKING";
+            case unspecified: return "UNSPECIFIED";
         }
         return super.toString();
     }
@@ -155,6 +153,11 @@ public class Revision implements java.io.Serializable
     public static final Revision START = new Revision(Kind.unspecified);
 
     /**
+     * unspecified revision
+     */
+    public static final Revision UNSPECIFIED = START;
+
+    /**
      * last committed revision, needs working copy
      */
     public static final Revision COMMITTED = new Revision(Kind.committed);
@@ -177,6 +180,7 @@ public class Revision implements java.io.Serializable
     /**
      * Marker revision number for no real revision
      */
+    @Native
     public static final int SVN_INVALID_REVNUM = -1;
 
     /**
@@ -271,6 +275,16 @@ public class Revision implements java.io.Serializable
                 throw new IllegalArgumentException("a date must be specified");
             revDate = date;
         }
+
+        /**
+         * Create a revision from a timestamp in milliseconds.
+         * Used by the native implementaiton.
+         */
+        private DateSpec(long milliseconds)
+        {
+            this(new Date(milliseconds));
+        }
+
         /**
          * Returns the date of the revision
          * @return the date
@@ -310,7 +324,6 @@ public class Revision implements java.io.Serializable
         {
             return revDate.hashCode();
         }
-
     }
 
     /**

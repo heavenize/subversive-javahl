@@ -27,13 +27,13 @@ import org.apache.subversion.javahl.ClientException;
 
 /**
  * This interface is used to the resolved revision range
- * the blame call.
+ * the {@link ISVNClient#blame} call.
  * @since 1.12
  */
 public interface BlameRangeCallback
 {
     /**
-     * This method will be called once before BlameLineCallback.singleLine
+     * This method will be called once before #{BlameLineCallback.singleLine}
      * is called for the first time.
      * @param startRevision     the resolved start of the blame range.
      * @param endRevision       the resolved end of the blame range.

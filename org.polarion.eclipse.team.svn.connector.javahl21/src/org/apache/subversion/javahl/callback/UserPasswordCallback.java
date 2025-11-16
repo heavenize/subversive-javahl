@@ -23,6 +23,8 @@
 
 package org.apache.subversion.javahl.callback;
 
+import java.lang.annotation.*;
+
 /**
  * <p>The interface for requesting authentication credentials from the
  * user.  Should the javahl bindings need the matching information,
@@ -31,22 +33,28 @@ package org.apache.subversion.javahl.callback;
  * <p>This callback can also be used to provide the equivalent of the
  * <code>--no-auth-cache</code> and <code>--non-interactive</code>
  * arguments accepted by the command-line client.</p>
+ *
+ * @deprecated Use {@see AuthnCallback}.
  */
+@Deprecated
 public interface UserPasswordCallback
 {
     /**
      * Reject the connection to the server.
      */
+    @Native
     public static final int Reject = 0;
 
     /**
      * Accept the connection to the server <i>once</i>.
      */
+    @Native
     public static final int AcceptTemporary = 1;
 
     /**
      * Accept the connection to the server <i>forever</i>.
      */
+    @Native
     public static final int AcceptPermanently = 2;
 
     /**

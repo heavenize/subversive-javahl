@@ -29,13 +29,9 @@ package org.apache.subversion.javahl;
  */
 class NativeException extends SubversionException
 {
-    // Update the serialVersionUID when there is a incompatible change
-    // made to this class.  See any of the following, depending upon
-    // the Java release.
-    // http://java.sun.com/j2se/1.3/docs/guide/serialization/spec/version.doc7.html
-    // http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf
-    // http://java.sun.com/j2se/1.5.0/docs/guide/serialization/spec/version.html#6678
-    // http://java.sun.com/javase/6/docs/platform/serialization/spec/version.html#6678
+    // Update the serialVersionUID when there is a incompatible change made to
+    // this class.  See the java documentation for when a change is incompatible.
+    // http://java.sun.com/javase/7/docs/platform/serialization/spec/version.html#6678
     private static final long serialVersionUID = 1L;
 
     /**
@@ -55,10 +51,8 @@ class NativeException extends SubversionException
      *
      * @param message A description of the problem.
      * @param source The error's source.
-     * @param cause The underlying cause of the error.
      * @param aprError Any associated APR error code for a wrapped
      * <code>svn_error_t</code>.
-     * @since 1.9
      */
     NativeException(String message, String source, Throwable cause,
                     int aprError)
@@ -66,44 +60,6 @@ class NativeException extends SubversionException
         super(message, cause);
         this.source = source;
         this.aprError = aprError;
-    }
-
-    /**
-     * This constructor is used by the native library for simple errors without cause.
-     *
-     * @param message A description of the problem.
-     * @param source The error's source.
-     * @param aprError Any associated APR error code for a wrapped
-     * <code>svn_error_t</code>.
-     */
-    NativeException(String message, String source, int aprError)
-    {
-        this(message, source, null, aprError);
-    }
-
-    /**
-     * Alternative constructor for wrapping Java exceptions.
-     * Added to fix NoSuchMethodError during operation cancellation.
-     * 
-     * @param message A description of the problem.
-     * @param cause The underlying Java exception being wrapped.
-     * @since Fix for move/cancel issue
-     */
-    NativeException(String message, Throwable cause)
-    {
-        this(message, null, cause, -1);
-    }
-
-    /**
-     * Constructor for wrapping Java exceptions without message.
-     * Native code may use this when wrapping callback exceptions.
-     * 
-     * @param cause The underlying Java exception being wrapped.
-     * @since Fix for move/cancel issue
-     */
-    NativeException(Throwable cause)
-    {
-        this(cause != null ? cause.getMessage() : "Wrapped exception", null, cause, -1);
     }
 
     /**
@@ -129,7 +85,11 @@ class NativeException extends SubversionException
      */
     public String getMessage()
     {
-        StringBuffer msg = new StringBuffer(super.getMessage());
+        StringBuilder msg = new StringBuilder();
+        String message = super.getMessage();
+        if (message != null) {
+            msg.append(message);
+        }
         // ### This might be better off in JNIUtil::handleSVNError().
         String src = getSource();
         if (src != null)

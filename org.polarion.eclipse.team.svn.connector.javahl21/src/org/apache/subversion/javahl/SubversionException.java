@@ -49,11 +49,11 @@ public class SubversionException extends Exception
     }
 
     /**
-     * This constructor is only used by sub-classes.
+     * This constructor is only used by sub-classes and the native
+     * implementation.
      *
      * @param message A description of the problem.
-     * @param cause The underlying cause of the error.
-     * @since 1.9
+     * @param cause The root cause of the exception.
      */
     protected SubversionException(String message, Throwable cause)
     {

@@ -22,7 +22,6 @@
  */
 
 package org.apache.subversion.javahl;
-
 import java.util.List;
 
 /**
@@ -31,14 +30,10 @@ import java.util.List;
  */
 public class ClientException extends NativeException
 {
-    // Update the serialVersionUID when there is a incompatible change
-    // made to this class.  See any of the following, depending upon
-    // the Java release.
-    // http://java.sun.com/j2se/1.3/docs/guide/serialization/spec/version.doc7.html
-    // http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf
-    // http://java.sun.com/j2se/1.5.0/docs/guide/serialization/spec/version.html#6678
-    // http://java.sun.com/javase/6/docs/platform/serialization/spec/version.html#6678
-    private static final long serialVersionUID = 1L;
+    // Update the serialVersionUID when there is a incompatible change made to
+    // this class.  See the java documentation for when a change is incompatible.
+    // http://java.sun.com/javase/7/docs/platform/serialization/spec/version.html#6678
+    private static final long serialVersionUID = 2L;
 
     /**
      * Describes a single error message in a stack of messages
@@ -47,7 +42,7 @@ public class ClientException extends NativeException
      */
     public static final class ErrorMessage
     {
-        public ErrorMessage(int code, String message, boolean generic)
+        ErrorMessage(int code, String message, boolean generic)
         {
             this.code = code;
             this.message = message;
@@ -68,7 +63,7 @@ public class ClientException extends NativeException
         private final int code;
         private final String message;
         private final boolean generic;
-    }
+    };
 
     /**
      * This constructor is only used by the native library.
@@ -100,37 +95,10 @@ public class ClientException extends NativeException
         this(message, null, source, aprError, null);
     }
 
-    /**
-     * Constructor for wrapping Java exceptions with message.
-     * Added to fix NoSuchMethodError during operation cancellation.
-     * 
-     * @param message A description of the problem.
-     * @param cause The underlying Java exception being wrapped.
-     * @since Fix for move/cancel issue
-     */
-    ClientException(String message, Throwable cause)
-    {
-        this(message, cause, null, -1, null);
-    }
-
-    /**
-     * Constructor for wrapping Java exceptions without message.
-     * Native code may use this when wrapping callback exceptions.
-     * 
-     * @param cause The underlying Java exception being wrapped.
-     * @since Fix for move/cancel issue
-     */
-    ClientException(Throwable cause)
-    {
-        this(cause != null ? cause.getMessage() : "Wrapped exception", cause, null, -1, null);
-    }
-
     public List<ErrorMessage> getAllMessages()
     {
         return messageStack;
     }
-
-    private final List<ErrorMessage> messageStack;
 
     /**
      * A conversion routine for maintaining backwards compatibility.
@@ -149,4 +117,6 @@ public class ClientException extends NativeException
             return new ClientException(t.getMessage(), null, -1);
         }
     }
+
+    private final List<ErrorMessage> messageStack;
 }

@@ -23,10 +23,12 @@
 
 package org.apache.subversion.javahl.callback;
 
+import org.apache.subversion.javahl.ISVNClient;
 import org.apache.subversion.javahl.types.NodeKind;
 
 /**
- * This interface is used to filter imported nodes in the import call.
+ * This interface is used to filter imported nodes in the
+ * {@link ISVNClient#import} call.
  * @since 1.8
  */
 public interface ImportFilterCallback

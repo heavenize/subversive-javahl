@@ -25,6 +25,8 @@ package org.apache.subversion.javahl.types;
 
 import java.util.Date;
 
+import org.apache.subversion.javahl.ConflictDescriptor;
+
 /**
  * Subversion status API.
  * This describes the status of one subversion item (file or directory) in
@@ -33,14 +35,10 @@ import java.util.Date;
  */
 public class Status implements java.io.Serializable
 {
-    // Update the serialVersionUID when there is a incompatible change
-    // made to this class.  See any of the following, depending upon
-    // the Java release.
-    // http://java.sun.com/j2se/1.3/docs/guide/serialization/spec/version.doc7.html
-    // http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf
-    // http://java.sun.com/j2se/1.5.0/docs/guide/serialization/spec/version.html#6678
-    // http://java.sun.com/javase/6/docs/platform/serialization/spec/version.html#6678
-    private static final long serialVersionUID = 2L;
+    // Update the serialVersionUID when there is a incompatible change made to
+    // this class.  See the java documentation for when a change is incompatible.
+    // http://java.sun.com/javase/7/docs/platform/serialization/spec/version.html#6678
+    private static final long serialVersionUID = 3L;
 
     /**
      * the url for accessing the item
@@ -79,12 +77,19 @@ public class Status implements java.io.Serializable
     private String lastCommitAuthor;
 
     /**
-     * the file or directory status (See StatusKind)
+     * The status of the node, based on restructuring changes; if the node
+     * has no restructuring changes, it's based on textStatus and propStatus.
+     * @since 1.9
+     */
+    private Kind nodeStatus;
+
+    /**
+     * The file or directory status, not including restructuring changes.
      */
     private Kind textStatus;
 
     /**
-     * the status of the properties (See StatusKind)
+     * The status of the properties.
      */
     private Kind propStatus;
 
@@ -110,9 +115,22 @@ public class Status implements java.io.Serializable
     private boolean fileExternal;
 
     /**
+     * The depth of the node as recorded in the working copy.
+     * @since 1.9
+     */
+    private Depth depth;
+
+    /**
      * is this item in a conflicted state
      */
     private boolean isConflicted;
+
+    /**
+     * The status of the node, based on text and property status, unless the
+     * node has restructuring changes.
+     * @since 1.9
+     */
+    private Kind repositoryNodeStatus;
 
     /**
      * the file or directory status of base (See StatusKind)
@@ -163,33 +181,9 @@ public class Status implements java.io.Serializable
      */
     private String changelist;
 
-    /**
-     * The node status (node_status in svn_client_status_t).
-     */
-    private Kind nodeStatus;
-
-    /**
-     * The repository node status (repos_node_status in svn_client_status_t).
-     */
-    private Kind repositoryNodeStatus;
-
-    /**
-     * The depth of the item.
-     */
-    private Depth depth;
-
-    /**
-     * If the item was moved, this contains the absolute path
-     * where the item was moved from, else <code>null</code>.
-     */
     private String movedFromAbspath;
 
-    /**
-     * If the item was moved, this contains the absolute path
-     * where the item was moved to, else <code>null</code>.
-     */
     private String movedToAbspath;
-
     /**
      * this constructor should only called from JNI code
      * @param path                  the file system path of item
@@ -199,22 +193,17 @@ public class Status implements java.io.Serializable
      * @param lastChangedRevision   the last revision this item was changed
      * @param lastChangedDate       the last date this item was changed
      * @param lastCommitAuthor      the author of the last change
-     * @param textStatus            the file or directory status (See
-     *                              StatusKind)
-     * @param propStatus            the property status (See StatusKind)
-     * @param repositoryTextStatus  the file or directory status of the base
+     * @param nodeStatus            the status of the node
+     * @param textStatus            the file or directory contents status
+     * @param propStatus            the property status
+     * @param repositoryNodeStatus  the status of the base node
+     * @param repositoryTextStatus  the file or directory contents status of the base
      * @param repositoryPropStatus  the property status of the base
      * @param locked                if the item is locked (running or aborted
      *                              operation)
      * @param copied                if the item is copy
+     * @param depth                 the inherent depth of the node in the working copy
      * @param isConflicted          if the item is part of a conflict
-     * @param conflictDescriptor    the description of the tree conflict
-     * @param conflictOld           in case of conflict, the file name of the
-     *                              the common base version
-     * @param conflictNew           in case of conflict, the file name of new
-     *                              repository version
-     * @param conflictWorking       in case of conflict, the file name of the
-     *                              former working copy version
      * @param switched              flag if the node has been switched in the
      *                              path
      * @param fileExternal          flag if the node is a file external
@@ -228,17 +217,20 @@ public class Status implements java.io.Serializable
      * @param reposLastCmtAuthor    the author of the last commit, if out of
      *                              date
      * @param changelist            the changelist the item is a member of
-     * @param movedFromAbspath      the path the item was moved from
-     * @param movedToAbspath        the path the item was moved to
+     * @param movedFromAbspath      path moved from
+     * @param movedToAbspath        path moved from
+     * @since 1.9
      */
     public Status(String path, String url, NodeKind nodeKind, long revision,
                   long lastChangedRevision, long lastChangedDate,
-                  String lastCommitAuthor, Kind nodeStatus, Kind textStatus,
-                  Kind propStatus, Kind repositoryNodeStatus,
+                  String lastCommitAuthor,
+                  Kind nodeStatus, Kind textStatus, Kind propStatus,
+                  Kind repositoryNodeStatus,
                   Kind repositoryTextStatus, Kind repositoryPropStatus,
                   boolean locked, boolean copied, Depth depth,
-                  boolean isConflicted, boolean switched, boolean fileExternal,
-                  Lock localLock, Lock reposLock, long reposLastCmtRevision,
+                  boolean isConflicted,
+                  boolean switched, boolean fileExternal, Lock localLock,
+                  Lock reposLock, long reposLastCmtRevision,
                   long reposLastCmtDate, NodeKind reposKind,
                   String reposLastCmtAuthor, String changelist,
                   String movedFromAbspath, String movedToAbspath)
@@ -271,6 +263,64 @@ public class Status implements java.io.Serializable
         this.changelist = changelist;
         this.movedFromAbspath = movedFromAbspath;
         this.movedToAbspath = movedToAbspath;
+    }
+
+    /**
+     * this constructor should only called from JNI code
+     * @param path                  the file system path of item
+     * @param url                   the url of the item
+     * @param nodeKind              kind of item (directory, file or unknown
+     * @param revision              the revision number of the base
+     * @param lastChangedRevision   the last revision this item was changed
+     * @param lastChangedDate       the last date this item was changed
+     * @param lastCommitAuthor      the author of the last change
+     * @param textStatus            the file or directory status (See
+     *                              StatusKind)
+     * @param propStatus            the property status (See StatusKind)
+     * @param repositoryTextStatus  the file or directory status of the base
+     * @param repositoryPropStatus  the property status of the base
+     * @param locked                if the item is locked (running or aborted
+     *                              operation)
+     * @param copied                if the item is copy
+     * @param isConflicted          if the item is part of a conflict
+     * @param switched              flag if the node has been switched in the
+     *                              path
+     * @param fileExternal          flag if the node is a file external
+     * @param localLock             the current lock
+     * @param reposLock             the lock as stored in the repository if
+     *                              any
+     * @param reposLastCmtRevision  the youngest revision, if out of date
+     * @param reposLastCmtDate      the last commit date, if out of date
+     * @param reposKind             the kind of the youngest revision, if
+     *                              out of date
+     * @param reposLastCmtAuthor    the author of the last commit, if out of
+     *                              date
+     * @param changelist            the changelist the item is a member of
+     * @param movedFromAbspath      path moved from
+     * @param movedToAbspath        path moved from
+     * @deprecated
+     */
+    @Deprecated
+    public Status(String path, String url, NodeKind nodeKind, long revision,
+                  long lastChangedRevision, long lastChangedDate,
+                  String lastCommitAuthor, Kind textStatus, Kind propStatus,
+                  Kind repositoryTextStatus, Kind repositoryPropStatus,
+                  boolean locked, boolean copied, boolean isConflicted,
+                  boolean switched, boolean fileExternal, Lock localLock,
+                  Lock reposLock, long reposLastCmtRevision,
+                  long reposLastCmtDate, NodeKind reposKind,
+                  String reposLastCmtAuthor, String changelist,
+                  String movedFromAbspath, String movedToAbspath)
+    {
+        this(path, url, nodeKind, revision,
+             lastChangedRevision, lastChangedDate, lastCommitAuthor,
+             Kind.none, textStatus, propStatus,
+             Kind.none, repositoryTextStatus, repositoryPropStatus,
+             locked, copied, Depth.unknown, isConflicted,
+             switched, fileExternal, localLock, reposLock,
+             reposLastCmtRevision, reposLastCmtDate, reposKind,
+             reposLastCmtAuthor, changelist,
+             movedFromAbspath, movedToAbspath);
     }
 
     /**
@@ -330,25 +380,64 @@ public class Status implements java.io.Serializable
     }
 
     /**
-     * Returns the status of the item (See StatusKind)
-     * @return file status property enum of the "textual" component.
+     * Returns the status of the node.
+     * @since 1.9
      */
-    public Kind getTextStatus()
+    public Kind getNodeStatus()
+    {
+        return nodeStatus;
+    }
+
+    /**
+     * Returns the status of the node as text.
+     * @since 1.9
+     */
+    public String getNodeStatusDescription()
+    {
+        return nodeStatus.toString();
+    }
+
+    /**
+     * Returns the real status of the item's contents.
+     * @since 1.9
+     */
+    public Kind getRawTextStatus()
     {
         return textStatus;
     }
 
     /**
-     * Returns the status of the item as text.
-     * @return english text
+     * Returns the real status of the item's contents as a string.
+     * @since 1.9
      */
-    public String getTextStatusDescription()
+    public String getRawTextStatusDescription()
     {
         return textStatus.toString();
     }
 
     /**
-     * Returns the status of the properties (See Status Kind)
+     * Returns the adjusted status of the item's contents, as
+     * compatible with JavaHL 1.8 and older verions.
+     * @return file status property enum of the "textual" component.
+     */
+    public Kind getTextStatus()
+    {
+        if (nodeStatus == Kind.modified || nodeStatus == Kind.conflicted)
+            return textStatus;
+        return nodeStatus;
+    }
+
+    /**
+     * Returns the adjusted status of the item's contents as text.
+     * @return english text
+     */
+    public String getTextStatusDescription()
+    {
+        return getTextStatus().toString();
+    }
+
+    /**
+     * Returns the status of the properties.
      * @return file status property enum of the "property" component.
      */
     public Kind getPropStatus()
@@ -366,17 +455,39 @@ public class Status implements java.io.Serializable
     }
 
     /**
-     * Returns the status of the item in the repository (See StatusKind)
-     * @return file status property enum of the "textual" component in the
-     * repository.
+     * Returns the status of the node in the repository.
+     * @since 1.9
      */
-    public Kind getRepositoryTextStatus()
+    public Kind getRepositoryNodeStatus()
+    {
+        return repositoryNodeStatus;
+    }
+
+    /**
+     * Returns the real status of the item's contents in the repository.
+     * @since 1.9
+     */
+    public Kind getRawRepositoryTextStatus()
     {
         return repositoryTextStatus;
     }
 
     /**
-     * Returns test status of the properties in the repository (See StatusKind)
+     * Returns the adjusted status of the item's contents in the
+     * repository, as compatible with JavaHL 1.8 and older verions.
+     * @return file status property enum of the "textual" component in the
+     * repository.
+     */
+    public Kind getRepositoryTextStatus()
+    {
+        if (repositoryNodeStatus == Kind.modified
+            || repositoryNodeStatus == Kind.conflicted)
+            return repositoryTextStatus;
+        return repositoryNodeStatus;
+    }
+
+    /**
+     * Returns test status of the properties in the repository.
      * @return file status property enum of the "property" component im the
      * repository.
      */
@@ -481,7 +592,7 @@ public class Status implements java.io.Serializable
      */
     public boolean hasRemote()
     {
-        return (isManaged() && getTextStatus() != Status.Kind.added);
+        return (isManaged() && !isAdded());
     }
 
     /**
@@ -490,7 +601,7 @@ public class Status implements java.io.Serializable
      */
     public boolean isAdded()
     {
-        return getTextStatus() == Status.Kind.added;
+        return getNodeStatus() == Status.Kind.added;
     }
 
     /**
@@ -499,7 +610,7 @@ public class Status implements java.io.Serializable
      */
     public boolean isDeleted()
     {
-        return getTextStatus() == Status.Kind.deleted;
+        return getNodeStatus() == Status.Kind.deleted;
     }
 
     /**
@@ -508,7 +619,7 @@ public class Status implements java.io.Serializable
      */
     public boolean isMerged()
     {
-        return getTextStatus() == Status.Kind.merged;
+        return getNodeStatus() == Status.Kind.merged;
     }
 
     /**
@@ -612,51 +723,30 @@ public class Status implements java.io.Serializable
     }
 
     /**
-     * @return the node status
+     * @return the conflicted state
      */
-    public Kind getNodeStatus()
+    public boolean isConflicted()
     {
-        return nodeStatus;
+        return isConflicted;
     }
 
-    /**
-     * @return the repository node status
-     */
-    public Kind getRepositoryNodeStatus()
-    {
-        return repositoryNodeStatus;
-    }
-
-    /**
-     * @return the depth
-     */
-    public Depth getDepth()
-    {
-        return depth;
-    }
-
-    /**
-     * @return the path the item was moved from, or null
-     */
     public String getMovedFromAbspath()
     {
         return movedFromAbspath;
     }
 
-    /**
-     * @return the path the item was moved to, or null
-     */
     public String getMovedToAbspath()
     {
         return movedToAbspath;
     }
 
     /**
-     * @return the conflicted state
+     * Returns the inherent depth of the node, as recorded in the working copy.
+     * @since 1.9
      */
-    public boolean isConflicted()
+    public Depth getDepth()
     {
-        return isConflicted;
+        return depth;
     }
 
     /**

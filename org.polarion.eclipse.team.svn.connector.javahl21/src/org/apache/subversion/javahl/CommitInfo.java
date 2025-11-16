@@ -32,13 +32,9 @@ import org.apache.subversion.javahl.types.LogDate;
  */
 public class CommitInfo implements java.io.Serializable
 {
-    // Update the serialVersionUID when there is a incompatible change
-    // made to this class.  See any of the following, depending upon
-    // the Java release.
-    // http://java.sun.com/j2se/1.3/docs/guide/serialization/spec/version.doc7.html
-    // http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf
-    // http://java.sun.com/j2se/1.5.0/docs/guide/serialization/spec/version.html#6678
-    // http://java.sun.com/javase/6/docs/platform/serialization/spec/version.html#6678
+    // Update the serialVersionUID when there is a incompatible change made to
+    // this class.  See the java documentation for when a change is incompatible.
+    // http://java.sun.com/javase/7/docs/platform/serialization/spec/version.html#6678
     private static final long serialVersionUID = 1L;
 
     /** the revision committed */
@@ -58,13 +54,10 @@ public class CommitInfo implements java.io.Serializable
 
     /** This constructor will be only called from the jni code.  */
     public CommitInfo(long rev, String d, String a, String pce, String rr)
+            throws java.text.ParseException
     {
         revision = rev;
-        try {
-            date = (new LogDate(d)).getDate();
-        } catch (java.text.ParseException e) {
-            date = null;
-        }
+        date = (new LogDate(d)).getDate();
         author = a;
         postCommitError = pce;
         reposRoot = rr;

@@ -1,642 +1,641 @@
-# JavaHL Connector Validation Plan
+# Validation Plan
 
-**Purpose:** Comprehensive validation of all Java class signatures against Apache Subversion 1.14.5 reference implementation and verification of JNI bindings to prevent JVM crashes.
-
-**Version:** 7.0.0.202511151608  
-**Reference:** Apache Subversion 1.14.5 JavaHL bindings  
-**Date:** 2025-11-16
+**Project:** Subversive SVN 1.14 JavaHL Connector  
+**Purpose:** Ensure code quality and reference compliance  
+**Version:** 1.0
 
 ---
 
-## Overview
+## Table of Contents
 
-This validation plan ensures:
-1. **Java Signature Parity:** Every Java class, interface, method, and field matches SVN 1.14.5 reference
-2. **JNI Binding Safety:** All native method signatures match C++ JNI calls exactly
-3. **ABI Compatibility:** No mismatches that could cause JVM crashes or native library failures
-
----
-
-## Implementation Inventory
-
-### Total Files: 94 Java Classes
-
-#### Main Package (10 files)
-- `ClientException.java` - Exception for client operations
-- `ClientNotifyInformation.java` - **FIXED** Constructor signature validated
-- `CommitInfo.java` - Result of commit operations
-- `CommitItem.java` - Item to be committed
-- `CommitItemStateFlags.java` - State flags for commit items
-- `ConflictDescriptor.java` - Describes a conflict
-- `ConflictResult.java` - Result of conflict resolution
-- `DiffSummary.java` - Summary of differences
-- `JNIError.java` - JNI-specific errors
-- `JNIObject.java` - Base class for JNI objects
-
-#### Core Interfaces (6 files)
-- `ISVNClient.java` - Main client interface (primary API)
-- `ISVNConfig.java` - Configuration interface
-- `ISVNEditor.java` - Editor interface for tree deltas
-- `ISVNRemote.java` - Remote repository operations
-- `ISVNReporter.java` - Status reporter interface
-- `ISVNRepos.java` - Repository operations interface
-
-#### Main Implementations (6 files)
-- `SVNClient.java` - **66 native methods** - Primary client implementation
-- `SVNRepos.java` - Repository implementation
-- `SVNUtil.java` - Utility functions
-- `NativeException.java` - Native exception wrapper
-- `NativeResources.java` - Native library loader
-- `OperationContext.java` - Context for operations
-- `ProgressEvent.java` - Progress reporting
-- `ReposNotifyInformation.java` - Repository notifications
-- `SubversionException.java` - Base exception class
-
-#### Callback Package (29 files)
-- `AuthnCallback.java` - Authentication callback
-- `BlameCallback.java` - Blame annotation callback
-- `BlameLineCallback.java` - Per-line blame callback
-- `BlameRangeCallback.java` - Range blame callback
-- `ChangelistCallback.java` - Changelist callback
-- `ClientNotifyCallback.java` - Client notification callback
-- `CommitCallback.java` - Commit progress callback
-- `CommitMessageCallback.java` - Commit message provider
-- `ConfigEvent.java` - Configuration events
-- `ConflictResolverCallback.java` - Conflict resolution callback
-- `DiffSummaryCallback.java` - Diff summary callback
-- `ImportFilterCallback.java` - Import filter
-- `InfoCallback.java` - Info retrieval callback
-- `InheritedProplistCallback.java` - Inherited properties callback
-- `ListCallback.java` - Directory list callback (deprecated)
-- `ListItemCallback.java` - Directory list item callback
-- `LogMessageCallback.java` - Log message callback
-- `PatchCallback.java` - Patch application callback
-- `ProgressCallback.java` - Progress reporting callback
-- `ProplistCallback.java` - Property list callback
-- `RemoteFileRevisionsCallback.java` - File revisions callback
-- `RemoteLocationSegmentsCallback.java` - Location segments callback
-- `RemoteStatus.java` - Remote status information
-- `ReposFreezeAction.java` - Repository freeze action
-- `ReposNotifyCallback.java` - Repository notification callback
-- `ReposVerifyCallback.java` - Repository verify callback
-- `StatusCallback.java` - Status callback
-- `TunnelAgent.java` - SSH tunnel agent
-- `UserPasswordCallback.java` - User/password authentication
-
-#### Types Package (26 files)
-- `ChangePath.java` - Path changed in revision
-- `Checksum.java` - File checksum
-- `ConflictVersion.java` - Conflict version info
-- `CopySource.java` - Copy operation source
-- `Depth.java` - **Enum** - Operation depth (empty, files, immediates, infinity)
-- `DiffOptions.java` - Diff operation options
-- `DirEntry.java` - Directory entry info
-- `ExternalItem.java` - External definition
-- `Info.java` - Path information
-- `Lock.java` - Lock information
-- `LogDate.java` - Log entry date
-- `Mergeinfo.java` - Merge tracking info
-- `NativeInputStream.java` - JNI input stream
-- `NativeOutputStream.java` - JNI output stream
-- `NodeKind.java` - **Enum** - Node type (none, file, dir, unknown, symlink)
-- `Property.java` - Versioned property
-- `Revision.java` - **Complex** - Revision specification (HEAD, BASE, COMMITTED, etc.)
-- `RevisionRange.java` - Range of revisions
-- `RevisionRangeList.java` - List of revision ranges
-- `RuntimeVersion.java` - Runtime library version
-- `Status.java` - Working copy status
-- `Tristate.java` - **Enum** - Three-state value (true, false, unknown)
-- `Version.java` - Version information
-- `VersionExtended.java` - Extended version info
-
-#### Remote Package (6 files)
-- `CommitEditor.java` - Remote commit editor
-- `RemoteFactory.java` - Factory for remote sessions
-- `RemoteSession.java` - Remote repository session
-- `RetryOpenSession.java` - Retry wrapper for sessions
-- `StateReporter.java` - State reporter for remote ops
-- `StatusEditor.java` - Status editor
-
-#### Util Package (8 files)
-- `ConfigImpl.java` - Configuration implementation
-- `ConfigLib.java` - Configuration utilities
-- `DiffLib.java` - Diff utilities
-- `PropLib.java` - Property utilities
-- `RequestChannel.java` - Request channel for tunneling
-- `ResponseChannel.java` - Response channel for tunneling
-- `SubstLib.java` - Keyword substitution utilities
-- `TunnelChannel.java` - Tunnel channel implementation
+1. [Pre-Commit Validation](#pre-commit-validation)
+2. [Build Validation](#build-validation)
+3. [Reference Compliance](#reference-compliance)
+4. [Runtime Validation](#runtime-validation)
+5. [Performance Validation](#performance-validation)
+6. [Automated Validation Scripts](#automated-validation-scripts)
 
 ---
 
-## Validation Checklist
+## Pre-Commit Validation
 
-### Phase 1: Java Signature Validation
+### Code Quality Checks
 
-#### 1.1 SVNClient.java - Native Methods (66 methods)
-**Priority: CRITICAL** - All methods use JNI, any mismatch causes JVM crash
+**Before committing ANY Java changes:**
 
-**Validation Steps:**
-1. Download SVN 1.14.5 source from https://subversion.apache.org/download/
-2. Compare our implementation against reference:
-   ```powershell
-   # Reference file
-   code --diff "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\SVNClient.java"
-   ```
+```powershell
+# 1. Verify no syntax errors
+cd org.polarion.eclipse.team.svn.connector.javahl21
+mvn compile
+# Expected: BUILD SUCCESS
 
-3. Extract all native method declarations:
-   ```powershell
-   # From our implementation
-   Select-String -Path "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\SVNClient.java" -Pattern "native " | Select-Object Line, LineNumber
-   ```
+# 2. Check file count
+$javaFiles = Get-ChildItem src\org\apache\subversion\javahl -Recurse -Filter *.java
+Write-Host "Java files: $($javaFiles.Count)"
+# Expected: 92 files
 
-4. Verify each native method signature:
-   - Method name (exact match)
-   - Return type (primitive, object, array)
-   - Parameter count
-   - Parameter types (order matters!)
-   - Parameter names (for documentation)
-   - Throws clauses
-
-**Expected Native Methods (to be extracted from reference):**
-```java
-// Example format - actual list to be generated from reference
-public native void dispose();
-public native String getAdminDirectoryName();
-public native boolean isAdminDirectory(String name);
-// ... (63 more methods)
+# 3. Verify no local modifications to reference files
+git status src/org/apache/subversion/javahl/
+# Expected: No unstaged changes (unless intentional)
 ```
 
-#### 1.2 Callback Interfaces (29 files)
-**Priority: HIGH** - Incorrect signatures cause callback failures
+### Documentation Checks
 
-**Validation for each callback:**
-- Interface methods match reference
-- Parameter types correct
-- Return types correct
-- Exception declarations match
-
-**Critical Callbacks:**
-- `ClientNotifyCallback.java` - Used in all operations
-- `CommitMessageCallback.java` - Used in commits
-- `ConflictResolverCallback.java` - Conflict handling
-- `UserPasswordCallback.java` - Authentication
-
-#### 1.3 Type Classes (26 files)
-**Priority: HIGH** - Used by JNI layer for data marshaling
-
-**Special Attention:**
-- **Enums** (Depth, NodeKind, Tristate) - Ordinal values must match C++ enums
-- **Revision.java** - Complex class with multiple constructors
-- **Status.java** - Large class with many fields
-- **Info.java** - Complex nested information
-
-**Enum Validation:**
-```java
-// Depth.java - Verify ordinal order matches C++ svn_depth_t
-public enum Depth {
-    unknown,    // 0 - svn_depth_unknown
-    exclude,    // 1 - svn_depth_exclude
-    empty,      // 2 - svn_depth_empty
-    files,      // 3 - svn_depth_files
-    immediates, // 4 - svn_depth_immediates
-    infinity    // 5 - svn_depth_infinity
-}
+```powershell
+# Verify all docs up to date
+ls *.md
+# Should include:
+# - README.md
+# - CHANGELOG.md
+# - PROJECT_SUMMARY.md
+# - MAINTENANCE_GUIDE.md
+# - VALIDATION_PLAN.md
+# - MIGRATION_TO_REFERENCE.md
+# - LOCAL_PATHS.md
+# - history\MIGRATION_HISTORY.md
 ```
 
-#### 1.4 Core Interfaces (6 files)
-**Priority: MEDIUM** - Used for polymorphism
+### Commit Checklist
 
-- Verify method signatures
-- Check default methods (Java 8+)
-- Validate inheritance hierarchy
-
-#### 1.5 Exception Classes (4 files)
-**Priority: MEDIUM** - Error handling
-
-- `ClientException.java` - Verify constructors
-- `SubversionException.java` - Base class validation
-- `NativeException.java` - JNI exception wrapper
-- `JNIError.java` - JNI error conditions
+- [ ] All Java files compile
+- [ ] No unintended changes to reference JavaHL files
+- [ ] Documentation updated
+- [ ] CHANGELOG.md updated
+- [ ] Build successful
+- [ ] Basic functionality tested
 
 ---
 
-### Phase 2: JNI Binding Validation
+## Build Validation
 
-**Objective:** Extract all JNI method calls from C++ native code and verify they match Java signatures.
+### Quick Build Test
 
-#### 2.1 Locate C++ Native Source
-```
-<svn-source>\subversion\bindings\javahl\native\
-```
+**Purpose:** Verify connector builds successfully
 
-**Key Files:**
-- `SVNClient.cpp` - Main client JNI implementations
-- `JNIUtil.cpp` - JNI utility functions
-- `org_apache_subversion_javahl_*.cpp` - Generated JNI stubs
-- `*.h` - JNI header files
-
-#### 2.2 Extract JNI FindClass Calls
-
-**Pattern:** `jclass cls = env->FindClass("org/apache/subversion/javahl/...")`
-
-**Validation:**
-- Class path matches Java package structure
-- Class exists in our implementation
-- No typos in class names
-
-**PowerShell Script:**
 ```powershell
-# Search for FindClass calls in C++ code
-Select-String -Path "<svn-source>\subversion\bindings\javahl\native\*.cpp" -Pattern 'FindClass\s*\(\s*"([^"]+)"' | ForEach-Object {
-    if ($_.Matches.Groups.Count -gt 1) {
-        $_.Matches.Groups[1].Value
-    }
-} | Sort-Object -Unique
+cd org.polarion.eclipse.team.svn.connector.javahl21
+.\quick-build.ps1
 ```
 
-#### 2.3 Extract JNI GetMethodID Calls
-
-**Pattern:** `jmethodID mid = env->GetMethodID(cls, "methodName", "(Ljava/lang/String;)V")`
-
-**Validation:**
-- Method name exists in Java class
-- JNI signature matches Java method signature
-- Return type matches
-- Parameter types match in order
-
-**JNI Signature Encoding:**
+**Expected Output:**
 ```
-Z - boolean          L<classname>; - object (e.g., Ljava/lang/String;)
-B - byte             [<type> - array (e.g., [I for int[], [Ljava/lang/String; for String[])
-C - char             V - void
-S - short            (params)returntype - method signature
-I - int
-J - long
-F - float
-D - double
+[INFO] BUILD SUCCESS
+[INFO] Total time: 7-10 seconds
 ```
 
-**PowerShell Script:**
+**Verification:**
 ```powershell
-# Extract GetMethodID calls with signatures
-Select-String -Path "<svn-source>\subversion\bindings\javahl\native\*.cpp" -Pattern 'GetMethodID\s*\([^,]+,\s*"([^"]+)"\s*,\s*"([^"]+)"' | ForEach-Object {
-    $methodName = $_.Matches.Groups[1].Value
-    $signature = $_.Matches.Groups[2].Value
-    Write-Output "Method: $methodName, Signature: $signature, File: $($_.Path), Line: $($_.LineNumber)"
-}
+# Check output exists
+ls target\*.jar
+# Expected: org.polarion.eclipse.team.svn.connector.javahl21-7.0.0-SNAPSHOT.jar
+
+# Check file size
+$jar = Get-Item target\org.polarion.eclipse.team.svn.connector.javahl21-7.0.0-SNAPSHOT.jar
+$jar.Length / 1KB
+# Expected: ~354 KB
 ```
 
-#### 2.4 Extract JNI GetFieldID Calls
+### Full Build Test
 
-**Pattern:** `jfieldID fid = env->GetFieldID(cls, "fieldName", "Ljava/lang/String;")`
+**Purpose:** Verify complete update site builds
 
-**Validation:**
-- Field exists in Java class
-- Field type matches JNI signature
-- Field accessibility (public/private doesn't matter for JNI, but check final/static)
-
-#### 2.5 Extract JNI CallXXXMethod Calls
-
-**Patterns:**
-- `CallVoidMethod(obj, mid, ...)`
-- `CallObjectMethod(obj, mid, ...)`
-- `CallIntMethod(obj, mid, ...)`
-- etc.
-
-**Validation:**
-- Return type matches method signature
-- Arguments match parameter types
-
-#### 2.6 Native Method Name Mangling
-
-**JNI Name Mangling Rules:**
-```
-Java: void someMethod(String arg)
-C++:  Java_org_apache_subversion_javahl_SVNClient_someMethod(JNIEnv *env, jobject obj, jstring arg)
-```
-
-**Verify:**
-- Native method declarations in Java match C++ function names
-- Parameter counts align (JNIEnv* and jobject/jclass don't count)
-
----
-
-### Phase 3: Critical Validation Points
-
-#### 3.1 Constructor Validation
-**Already Fixed:** `ClientNotifyInformation.java` constructor
-
-**Other Critical Constructors:**
-- `Revision.java` - Multiple constructors for different revision types
-- `Status.java` - Complex constructor
-- `Info.java` - Nested object construction
-- `Lock.java` - Lock information construction
-
-**JNI Constructor Calls:**
-```cpp
-// Pattern in C++
-jmethodID constructor = env->GetMethodID(cls, "<init>", "(params)V");
-jobject obj = env->NewObject(cls, constructor, args...);
-```
-
-#### 3.2 Enum Ordinal Validation
-**CRITICAL:** Enum ordinal values must match C++ enum values exactly
-
-**Files to Check:**
-1. `Depth.java` vs `svn_depth_t` in `svn_types.h`
-2. `NodeKind.java` vs `svn_node_kind_t`
-3. `Tristate.java` vs custom tristate implementation
-
-**Validation Script:**
 ```powershell
-# Extract enum definitions from Java
-Select-String -Path "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\types\*.java" -Pattern "public enum|^\s+\w+[,;]" -Context 0,5
+cd D:\users\Jose\development\polarion-javahl
+.\build-updatesite.ps1
 ```
 
-#### 3.3 Array Handling
-**JNI Arrays require special handling**
-
-**Java Arrays in Native Code:**
-- `String[]` → `jobjectArray` → `GetObjectArrayElement()`
-- `int[]` → `jintArray` → `GetIntArrayElements()`
-- `byte[]` → `jbyteArray` → `GetByteArrayElements()`
-
-**Validation:**
-- Array parameters declared correctly in Java
-- C++ code uses correct JNI array functions
-- Array release functions called (no memory leaks)
-
-#### 3.4 Exception Propagation
-
-**Java Exceptions from Native:**
-```cpp
-// C++ throws Java exception
-env->ThrowNew(exceptionClass, "Error message");
+**Expected Output:**
+```
+[INFO] Reactor Summary:
+[INFO] polarion-javahl ...................................... SUCCESS [  0.123 s]
+[INFO] org.polarion.eclipse.team.svn.connector.javahl21 ..... SUCCESS [  7.812 s]
+[INFO] org.polarion.eclipse.team.svn.connector.javahl21.win64 SUCCESS [  0.456 s]
+[INFO] org.polarion.eclipse.team.svn.connector.javahl21.feature SUCCESS [  0.234 s]
+[INFO] org.polarion.eclipse.team.svn.connector.javahl21.site . SUCCESS [  1.567 s]
+[INFO] BUILD SUCCESS
+[INFO] Total time: 10-12 seconds
 ```
 
-**Validation:**
-- Exception classes exist in Java
-- Exception constructors match JNI calls
-- Checked exceptions declared in Java methods
-
----
-
-### Phase 4: Automated Validation Scripts
-
-#### Script 1: Class Inventory Comparison
+**Verification:**
 ```powershell
-# Compare class lists between reference and implementation
-$refClasses = Get-ChildItem "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\*.java" -Recurse | ForEach-Object { $_.FullName -replace '.*\\org\\apache\\', '' }
-$ourClasses = Get-ChildItem "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\*.java" -Recurse | ForEach-Object { $_.FullName -replace '.*\\org\\apache\\', '' }
+# Check update site
+cd org.polarion.eclipse.team.svn.connector.javahl21.site\target\repository
+ls
+# Expected:
+# - artifacts.jar
+# - content.jar
+# - plugins\ (with JARs)
+# - features\ (with JARs)
 
-Compare-Object $refClasses $ourClasses | Format-Table -AutoSize
-```
+# Verify plugin exists
+ls plugins\org.polarion.eclipse.team.svn.connector.javahl21*.jar
+# Expected: File exists
 
-#### Script 2: Method Count Validation
-```powershell
-# Count methods in each class
-Get-ChildItem "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\*.java" -Recurse | ForEach-Object {
-    $methodCount = (Select-String -Path $_ -Pattern '^\s*(public|protected|private).*\(.*\)' | Measure-Object).Count
-    [PSCustomObject]@{
-        Class = $_.Name
-        Methods = $methodCount
-    }
-} | Sort-Object Methods -Descending | Format-Table -AutoSize
-```
-
-#### Script 3: Native Method Extraction
-```powershell
-# Extract all native method signatures
-Select-String -Path "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\SVNClient.java" -Pattern 'native .*\(' | ForEach-Object {
-    $_.Line.Trim()
-} | Out-File "native_methods.txt"
-```
-
-#### Script 4: JNI Signature Validator
-```powershell
-# Extract JNI method signatures from C++ code
-$jniCalls = Select-String -Path "<svn-source>\subversion\bindings\javahl\native\*.cpp" -Pattern 'Get(Method|Static Method)ID\s*\([^,]+,\s*"([^"]+)"\s*,\s*"([^"]+)"'
-
-$jniCalls | ForEach-Object {
-    [PSCustomObject]@{
-        File = $_.Filename
-        Line = $_.LineNumber
-        Method = $_.Matches.Groups[2].Value
-        Signature = $_.Matches.Groups[3].Value
-    }
-} | Export-Csv "jni_signatures.csv" -NoTypeInformation
+# Verify feature exists
+ls features\org.polarion.eclipse.team.svn.connector.javahl21.feature*.jar
+# Expected: File exists
 ```
 
 ---
 
-## Validation Execution Plan
+## Reference Compliance
 
-### Step-by-Step Process
+### File Comparison Validation
+
+**Purpose:** Ensure all JavaHL files match SVN 1.14.5 reference
 
 **Prerequisites:**
-1. Download Apache Subversion 1.14.5 source code
-2. Extract to `<svn-source>` directory
-3. Install PowerShell 5.1+ or PowerShell Core
-4. Install VS Code with Java extensions (for diff viewing)
+- Reference source at: `D:\Work\code\subversion-1.14.5`
 
-**Phase 1: Quick Inventory Check (30 minutes)**
-1. Run class inventory comparison script
-2. Identify any missing or extra classes
-3. Generate class count report
+**Validation Script:**
 
-**Phase 2: SVNClient Deep Dive (2 hours)**
-1. Compare SVNClient.java files side-by-side
-2. Extract all 66 native method signatures
-3. Create reference table of methods
-4. Verify each method signature exactly
+```powershell
+# validate-reference-compliance.ps1
 
-**Phase 3: Callback Validation (2 hours)**
-1. For each of 29 callback files:
-   - Open side-by-side diff
-   - Verify interface methods match
-   - Check parameter types
-   - Validate return types
+$ourPath = "D:\users\Jose\development\polarion-javahl\org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl"
+$refPath = "D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\org\apache\subversion\javahl"
 
-**Phase 4: Type Class Validation (3 hours)**
-1. Validate enum ordinal values (Depth, NodeKind, Tristate)
-2. Check complex classes (Revision, Status, Info)
-3. Verify constructors and field types
-4. Validate serialization compatibility
+Write-Host "=== Reference Compliance Validation ===" -ForegroundColor Cyan
+Write-Host ""
 
-**Phase 5: JNI Extraction (4 hours)**
-1. Run FindClass extraction script
-2. Run GetMethodID extraction script
-3. Run GetFieldID extraction script
-4. Create JNI call reference database
+# Get all Java files
+$ourFiles = Get-ChildItem $ourPath -Recurse -Filter "*.java" | Sort-Object Name
+$refFiles = Get-ChildItem $refPath -Recurse -Filter "*.java" | Sort-Object Name
 
-**Phase 6: Cross-Reference Validation (3 hours)**
-1. Match each native Java method to C++ JNI function
-2. Verify JNI signatures match Java signatures
-3. Check constructor calls
-4. Validate enum conversions
+Write-Host "Our files: $($ourFiles.Count)"
+Write-Host "Reference files: $($refFiles.Count)"
 
-**Phase 7: Edge Case Testing (2 hours)**
-1. Array parameter handling
-2. Null parameter handling
-3. Exception propagation
-4. Callback invocation from native code
+if ($ourFiles.Count -ne $refFiles.Count) {
+    Write-Host "❌ FAILED: File count mismatch!" -ForegroundColor Red
+    exit 1
+}
 
-**Total Estimated Time: 16 hours**
+# Compare each file
+$differences = 0
+$checked = 0
 
----
+foreach ($ourFile in $ourFiles) {
+    $relativePath = $ourFile.FullName.Substring($ourPath.Length)
+    $refFile = Get-Item "$refPath$relativePath" -ErrorAction SilentlyContinue
+    
+    if (-not $refFile) {
+        Write-Host "❌ Missing in reference: $relativePath" -ForegroundColor Red
+        $differences++
+        continue
+    }
+    
+    $ourHash = Get-FileHash $ourFile.FullName -Algorithm MD5
+    $refHash = Get-FileHash $refFile.FullName -Algorithm MD5
+    
+    if ($ourHash.Hash -ne $refHash.Hash) {
+        Write-Host "❌ Different: $relativePath" -ForegroundColor Red
+        Write-Host "   Our size: $($ourFile.Length) bytes"
+        Write-Host "   Ref size: $($refFile.Length) bytes"
+        $differences++
+    }
+    
+    $checked++
+}
 
-## Known Validation Results
+Write-Host ""
+Write-Host "Files checked: $checked"
+Write-Host "Differences: $differences"
 
-### ✅ Already Validated
+if ($differences -eq 0) {
+    Write-Host "✅ PASSED: All files match reference!" -ForegroundColor Green
+    exit 0
+} else {
+    Write-Host "❌ FAILED: $differences files differ from reference!" -ForegroundColor Red
+    exit 1
+}
+```
 
-#### ClientNotifyInformation.java Constructor
-**Issue Found:** Constructor signature mismatch  
-**Symptoms:** JVM crash on move/rename operations  
-**Root Cause:** Constructor parameter order didn't match JNI NewObject call  
-**Fix Applied:** Corrected constructor signature to match C++ JNI call  
-**Validation:** All SVN operations (checkout, update, commit, move, rename) working  
-**Status:** ✅ FIXED and VERIFIED
+**Usage:**
+```powershell
+.\validate-reference-compliance.ps1
+```
 
----
+**Expected Output:**
+```
+=== Reference Compliance Validation ===
 
-## Validation Report Template
+Our files: 92
+Reference files: 92
+Files checked: 92
+Differences: 0
+✅ PASSED: All files match reference!
+```
 
-### Class: [ClassName.java]
+### Signature Validation
 
-**Package:** org.apache.subversion.javahl.[package]  
-**Type:** [Interface/Class/Enum]  
-**Complexity:** [Low/Medium/High/Critical]  
-**Native Methods:** [count]
+**Purpose:** Verify JNI method signatures match native library
 
-#### Signature Comparison
-- [ ] Class declaration matches reference
-- [ ] All methods present
-- [ ] Method signatures match
-- [ ] Field types match
-- [ ] Constructor signatures match
-- [ ] Exception declarations match
+**Key Files to Check:**
+- `ISVNClient.java` - 83 throws clauses, 192 methods
+- `SVNClient.java` - 77 native methods
+- `SVNRepos.java` - 22 throws clauses
 
-#### JNI Validation (if applicable)
-- [ ] Native method names match C++ functions
-- [ ] JNI signatures extracted from C++
-- [ ] Parameter types align
-- [ ] Return types align
-- [ ] Constructor calls validated
+**Manual Validation:**
 
-#### Issues Found
-[List any mismatches]
+```powershell
+# Check for "native" keyword
+Select-String -Path "src\org\apache\subversion\javahl\SVNClient.java" -Pattern "native" | Measure-Object
+# Expected: 77 matches (77 native methods)
 
-#### Changes Required
-[List any fixes needed]
+# Check for "throws" keyword
+Select-String -Path "src\org\apache\subversion\javahl\ISVNClient.java" -Pattern "throws" | Measure-Object
+# Expected: ~83 matches
 
-#### Status
-- [ ] Pending Review
-- [ ] Validated - No Issues
-- [ ] Validated - Issues Found
-- [ ] Fixed and Re-validated
+# Verify no try-catch masking exceptions
+Select-String -Path "src\org\apache\subversion\javahl\**\*.java" -Pattern "catch.*ParseException" -Recurse
+# Expected: 0 matches (should not catch ParseException)
+```
 
----
+### Throws Clause Validation
 
-## Priority Classification
+**Critical Check:** Ensure all JNI methods declare correct throws clauses
 
-### CRITICAL (Must validate immediately)
-1. **SVNClient.java** - 66 native methods, primary API
-2. **ClientNotifyInformation.java** - Already fixed, but verify others
-3. **Enum classes** - Ordinal values must match C++ exactly
-4. **Constructor-heavy classes** - Revision, Status, Info
+**Validation Commands:**
 
-### HIGH (Validate before release)
-5. All callback interfaces (29 files)
-6. Core type classes (26 files)
-7. Exception classes
+```powershell
+# ISVNClient.java - Check critical methods
+Select-String -Path "src\org\apache\subversion\javahl\ISVNClient.java" -Pattern "void checkout.*throws ClientException"
+Select-String -Path "src\org\apache\subversion\javahl\ISVNClient.java" -Pattern "void commit.*throws ClientException"
+Select-String -Path "src\org\apache\subversion\javahl\ISVNClient.java" -Pattern "CommitInfo doImport.*throws ClientException"
 
-### MEDIUM (Validate for completeness)
-8. Utility classes (8 files)
-9. Remote package classes (6 files)
-10. Core interfaces (6 files)
+# SVNClient.java - Check native methods
+Select-String -Path "src\org\apache\subversion\javahl\SVNClient.java" -Pattern "private native.*throws ClientException"
 
----
+# SVNRepos.java - Check repository methods
+Select-String -Path "src\org\apache\subversion\javahl\SVNRepos.java" -Pattern "public.*throws"
+```
 
-## Success Criteria
-
-### Validation Complete When:
-1. ✅ All 94 Java classes compared against reference
-2. ✅ All class/method/field signatures match exactly
-3. ✅ All JNI method calls extracted from C++ code
-4. ✅ All JNI signatures cross-referenced with Java methods
-5. ✅ All enum ordinal values verified against C++ enums
-6. ✅ All constructors validated against JNI NewObject calls
-7. ✅ No signature mismatches found
-8. ✅ Comprehensive validation report generated
-
-### Risk Mitigation:
-- Any mismatch found → File GitHub issue immediately
-- High/Critical issues → Fix before release
-- Medium issues → Document and schedule fix
-- Low issues → Document for future reference
+**Expected:** All methods that interact with native code should declare `throws ClientException` (and ParseException where appropriate).
 
 ---
 
-## Maintenance
+## Runtime Validation
 
-**This validation should be performed:**
-- Before each major release
-- When upgrading to new SVN version (e.g., 1.15.x)
-- After any JNI-related code changes
-- After any constructor/signature changes
-- When investigating JVM crashes
-- Annually as part of code review
+### Installation Test
 
-**Document Updates:**
-- Add validation results to this document
-- Update MAINTENANCE_GUIDE.md with findings
-- Create GitHub issues for any problems
-- Update DEVELOPMENT_SESSION_SUMMARY.md with fixes
+**Purpose:** Verify connector installs correctly in Eclipse
 
----
+**Steps:**
 
-## Next Steps
-
-1. **Obtain SVN 1.14.5 Source Code**
+1. **Start Eclipse:**
    ```powershell
-   # Download from https://subversion.apache.org/download/
-   # Extract to your <svn-source> directory
+   cd C:\bin\eclipse
+   .\eclipse.exe -clean
    ```
 
-2. **Run Phase 1 Scripts**
-   ```powershell
-   # Execute class inventory comparison
-   # Review results
-   ```
+2. **Install Connector:**
+   - Help → Install New Software
+   - Add → Local
+   - Location: `D:\users\Jose\development\polarion-javahl\org.polarion.eclipse.team.svn.connector.javahl21.site\target\repository`
+   - Name: "Local Connector Build"
+   - Select "Subversive SVN 1.14 JavaHL Connector"
+   - Finish installation
+   - Restart Eclipse
 
-3. **Begin SVNClient.java Deep Dive**
-   ```powershell
-   code --diff "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\SVNClient.java"
-   ```
+3. **Verify Installation:**
+   - Window → Preferences → Team → SVN
+   - SVN Connector tab
+   - Expected: "JavaHL 1.14.x" appears in list
+   - Select it and click Apply
 
-4. **Extract JNI Signatures**
-   ```powershell
-   # Run JNI extraction scripts
-   # Build reference database
-   ```
+4. **Check Connector Status:**
+   - Should show: "Connected"
+   - Should show: Version information
 
-5. **Systematic Validation**
-   - Work through each priority level
-   - Document findings
-   - Fix any issues
-   - Re-validate fixes
+### Operation Testing
+
+**Purpose:** Verify all SVN operations work correctly
+
+**Test Repository Setup:**
+```powershell
+# Create test repository
+svnadmin create D:\temp\test-repo
+
+# Checkout
+# In Eclipse: File → Import → SVN → Checkout
+```
+
+**Test Cases:**
+
+#### 1. Checkout Test
+```
+Action: Checkout a project
+Expected: ✓ Project checked out successfully
+Validation: Files appear in workspace
+```
+
+#### 2. Commit Test
+```
+Action: Modify file → Team → Commit
+Expected: ✓ File committed
+Validation: No NoSuchMethodError
+Notes: THIS WAS THE ORIGINAL BUG - Critical test!
+```
+
+#### 3. Update Test
+```
+Action: Team → Update
+Expected: ✓ Update successful
+Validation: Status shows up-to-date
+```
+
+#### 4. Add Test
+```
+Action: New file → Team → Add to Version Control
+Expected: ✓ File added
+Validation: File shows as added
+```
+
+#### 5. Status Test
+```
+Action: Team → Synchronize with Repository
+Expected: ✓ Status displayed
+Validation: Modified/added/deleted files shown correctly
+```
+
+#### 6. Move Test
+```
+Action: Team → Move/Rename
+Expected: ✓ Move successful
+Validation: SVN history preserved
+```
+
+#### 7. Branch Test
+```
+Action: Team → Branch/Tag
+Expected: ✓ Branch created
+Validation: Branch visible in repository
+```
+
+#### 8. Merge Test
+```
+Action: Team → Merge
+Expected: ✓ Merge successful
+Validation: Changes merged correctly
+```
+
+#### 9. Revert Test
+```
+Action: Team → Revert
+Expected: ✓ Changes reverted
+Validation: File restored to repository version
+```
+
+#### 10. Diff Test
+```
+Action: Team → Show Differences
+Expected: ✓ Diff displayed
+Validation: Changes highlighted correctly
+```
+
+**Test Result Template:**
+
+```
+Date: _______________
+Tester: _______________
+Eclipse Version: _______________
+Connector Version: _______________
+
+Test Results:
+[ ] Checkout - PASS / FAIL
+[ ] Commit - PASS / FAIL
+[ ] Update - PASS / FAIL
+[ ] Add - PASS / FAIL
+[ ] Status - PASS / FAIL
+[ ] Move - PASS / FAIL
+[ ] Branch - PASS / FAIL
+[ ] Merge - PASS / FAIL
+[ ] Revert - PASS / FAIL
+[ ] Diff - PASS / FAIL
+
+Notes:
+_________________________________
+```
+
+### Error Log Validation
+
+**Purpose:** Verify no errors in Eclipse log
+
+**Steps:**
+
+1. **Open Error Log:**
+   - Window → Show View → Error Log
+
+2. **Check for Errors:**
+   - Look for entries with connector name
+   - Check severity: Error > Warning > Info
+
+3. **Common Issues to Check:**
+   - NoSuchMethodError (should NOT appear)
+   - UnsatisfiedLinkError (should NOT appear)
+   - ClassNotFoundException (should NOT appear)
+   - NullPointerException (investigate if appears)
+
+4. **Log Location:**
+   ```
+   <workspace>/.metadata/.log
+   ```
 
 ---
 
-## References
+## Performance Validation
 
-- **SVN JavaHL Bindings:** https://subversion.apache.org/docs/api/latest/javahl/
-- **JNI Specification:** https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/jniTOC.html
-- **JNI Type Signatures:** https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html
-- **SVN 1.14.5 Download:** https://subversion.apache.org/download.cgi
-- **Our Implementation:** org.polarion.eclipse.team.svn.connector.javahl21/src/
+### Operation Timing
+
+**Purpose:** Ensure operations complete in reasonable time
+
+**Benchmark Tests:**
+
+```
+Test Repository Size: 1000 files, 100 MB
+
+Operation          | Expected Time | Acceptable Range
+-------------------|---------------|------------------
+Checkout           | 10-30s        | < 60s
+Commit (1 file)    | 1-2s          | < 5s
+Update (no changes)| 1-2s          | < 5s
+Status             | 1-3s          | < 10s
+Diff (1 file)      | 0.5-1s        | < 3s
+```
+
+**Performance Test Script:**
+
+```powershell
+# performance-test.ps1
+$results = @()
+
+# Measure operation
+$start = Get-Date
+# [Perform operation in Eclipse]
+$end = Get-Date
+$duration = ($end - $start).TotalSeconds
+
+$results += [PSCustomObject]@{
+    Operation = "Checkout"
+    Duration = $duration
+    Status = if ($duration -lt 60) { "PASS" } else { "FAIL" }
+}
+
+# Repeat for each operation
+# Output results
+$results | Format-Table
+```
+
+### Memory Usage
+
+**Purpose:** Verify no memory leaks
+
+**Test:**
+1. Start Eclipse
+2. Note initial memory usage
+3. Perform 100 operations
+4. Note final memory usage
+
+**Expected:**
+- Memory increase: < 100 MB
+- No OutOfMemoryError
+
+**Monitor:**
+```
+Eclipse: Help → About → Installation Details → Configuration
+Look for: -Xmx setting
+```
 
 ---
 
-*End of Validation Plan*
+## Automated Validation Scripts
+
+### Complete Validation Script
+
+```powershell
+# complete-validation.ps1
+
+Write-Host "=== Complete Validation Script ===" -ForegroundColor Cyan
+Write-Host ""
+
+$passed = 0
+$failed = 0
+
+# Test 1: Build
+Write-Host "Test 1: Build Validation..." -ForegroundColor Yellow
+cd D:\users\Jose\development\polarion-javahl
+.\build-updatesite.ps1 2>&1 | Out-Null
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "✅ Build: PASSED" -ForegroundColor Green
+    $passed++
+} else {
+    Write-Host "❌ Build: FAILED" -ForegroundColor Red
+    $failed++
+}
+
+# Test 2: File Count
+Write-Host "Test 2: File Count Validation..." -ForegroundColor Yellow
+$javaFiles = Get-ChildItem "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl" -Recurse -Filter *.java
+if ($javaFiles.Count -eq 92) {
+    Write-Host "✅ File Count: PASSED (92 files)" -ForegroundColor Green
+    $passed++
+} else {
+    Write-Host "❌ File Count: FAILED ($($javaFiles.Count) files, expected 92)" -ForegroundColor Red
+    $failed++
+}
+
+# Test 3: Update Site
+Write-Host "Test 3: Update Site Validation..." -ForegroundColor Yellow
+$updateSitePath = "org.polarion.eclipse.team.svn.connector.javahl21.site\target\repository"
+if ((Test-Path "$updateSitePath\artifacts.jar") -and (Test-Path "$updateSitePath\content.jar")) {
+    Write-Host "✅ Update Site: PASSED" -ForegroundColor Green
+    $passed++
+} else {
+    Write-Host "❌ Update Site: FAILED" -ForegroundColor Red
+    $failed++
+}
+
+# Test 4: Reference Compliance
+Write-Host "Test 4: Reference Compliance..." -ForegroundColor Yellow
+# Run reference validation script
+.\validate-reference-compliance.ps1 2>&1 | Out-Null
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "✅ Reference Compliance: PASSED" -ForegroundColor Green
+    $passed++
+} else {
+    Write-Host "❌ Reference Compliance: FAILED" -ForegroundColor Red
+    $failed++
+}
+
+# Summary
+Write-Host ""
+Write-Host "=== Validation Summary ===" -ForegroundColor Cyan
+Write-Host "Passed: $passed" -ForegroundColor Green
+Write-Host "Failed: $failed" -ForegroundColor Red
+
+if ($failed -eq 0) {
+    Write-Host ""
+    Write-Host "✅ ALL VALIDATIONS PASSED" -ForegroundColor Green
+    exit 0
+} else {
+    Write-Host ""
+    Write-Host "❌ VALIDATION FAILED" -ForegroundColor Red
+    exit 1
+}
+```
+
+**Usage:**
+```powershell
+.\complete-validation.ps1
+```
+
+### Quick Validation (Pre-Commit)
+
+```powershell
+# quick-validation.ps1
+Write-Host "Quick Validation..." -ForegroundColor Cyan
+
+# Build only
+cd org.polarion.eclipse.team.svn.connector.javahl21
+.\quick-build.ps1 2>&1 | Out-Null
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "✅ Quick validation PASSED" -ForegroundColor Green
+} else {
+    Write-Host "❌ Quick validation FAILED" -ForegroundColor Red
+}
+```
+
+---
+
+## Validation Schedule
+
+### Before Every Commit
+- [ ] Quick build test
+- [ ] File count check
+- [ ] Documentation updated
+
+### Before Every Release
+- [ ] Complete validation script
+- [ ] Reference compliance check
+- [ ] Full build test
+- [ ] Manual operation testing
+- [ ] Performance validation
+- [ ] Error log review
+
+### Monthly
+- [ ] Complete validation
+- [ ] Extended operation testing
+- [ ] Performance benchmarks
+
+### After Major Changes
+- [ ] Full validation suite
+- [ ] Extensive manual testing
+- [ ] Performance regression testing
+- [ ] Multiple Eclipse version testing
+
+---
+
+**Document Version:** 1.0  
+**Last Updated:** November 16, 2025  
+**Next Review:** February 16, 2026

@@ -52,7 +52,7 @@ public class DiffOptions
         {
             this.value = value;
         }
-    }
+    };
 
     /**
      * @param flagset any combination of the Flag enumeration values.

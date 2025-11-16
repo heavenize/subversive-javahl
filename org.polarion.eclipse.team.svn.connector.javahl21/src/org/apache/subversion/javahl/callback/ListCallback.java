@@ -35,8 +35,6 @@ public interface ListCallback
 {
     /**
      * This method will be called for each directory entry.
-     * @param dirent the directory entry
-     * @param lock the lock information
      */
     public void doEntry(DirEntry dirent, Lock lock);
 }

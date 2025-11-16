@@ -1,195 +1,438 @@
-# Documentation Index
+# Subversive SVN 1.14 JavaHL Connector
 
-**Project:** Subversive SVN 1.14 JavaHL Connector  
-**Version:** 7.0.0.202511151608  
-**Last Updated:** November 15, 2025  
-**Status:** ✅ Production Ready - All Operations Working
-
----
-
-## ⚠️ DOCUMENTATION POLICY
-
-**DO NOT CREATE NEW MARKDOWN FILES FOR CHANGES/FIXES**
-
-When documenting changes, fixes, or updates:
-- ✅ **UPDATE existing documents** (DEVELOPMENT_SESSION_SUMMARY.md, MAINTENANCE_GUIDE.md, PROJECT_SUMMARY.md)
-- ✅ **MERGE new information** into appropriate sections
-- ✅ **USE history/ folder** only for major archival documents
-- ❌ **NEVER create** FIX_XXX.md, CHANGE_XXX.md, UPDATE_XXX.md files
-- ❌ **AVOID document proliferation** - consolidate, don't create
-
-**Purpose:** Keep documentation maintainable, searchable, and consolidated in key reference documents.
+**Version:** 7.0.0.202511162055  
+**Status:** ✅ Production Ready - 100% Reference Implementation  
+**Last Updated:** November 16, 2025
 
 ---
 
-## 📚 Current Documentation (Start Here)
+## Overview
+
+Eclipse plugin providing **Apache Subversion 1.14.x** support via JavaHL native interface. This connector enables all Subversive SVN Team Provider operations in Eclipse.
+
+**Key Features:**
+- ✅ Complete SVN 1.14.5 JavaHL reference implementation (92 classes, 100% match)
+- ✅ Full Subversive integration (checkout, commit, update, branch, merge, etc.)
+- ✅ Native performance via JNI
+- ✅ Windows x64 support (native libraries included)
+- ✅ Eclipse 2024-12 compatible
+
+---
+
+## Quick Start
 
 ### For Users
 
-1. **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** ⭐ **START HERE**
-   - Complete project overview and current status
-   - Feature list and technical specifications
-   - Build history and all fixes applied
-   - Installation quick reference
+**1. Install Plugin:**
+- In Eclipse: Help → Install New Software
+- Add update site: `[your-update-site-url]`
+- Select "Subversive SVN 1.14 JavaHL Connector"
+- Install and restart Eclipse
 
-2. **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)**
-   - Step-by-step installation instructions
-   - Three installation methods
-   - Troubleshooting common issues
-   - Platform support information
+**2. Configure Subversive:**
+- Window → Preferences → Team → SVN
+- SVN Connector: Select "JavaHL 1.14.x"
+- Apply and Close
 
-### For Developers/Maintainers
+**3. Start Using SVN:**
+- File → Import → SVN → Checkout Projects from SVN
+- Or right-click project → Team → Share Project → SVN
 
-3. **[MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md)** ⭐ **CRITICAL FOR MAINTENANCE**
-   - Critical file locations and architecture
-   - How to fix JNI signature mismatches
-   - How to add new native methods
-   - How to update to new SVN versions
-   - Troubleshooting guide with solutions
-   - **Keep this for future maintenance!**
+**Detailed Instructions:** See [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)
 
-4. **[org.polarion.eclipse.team.svn.connector.javahl21/README.md](org.polarion.eclipse.team.svn.connector.javahl21/README.md)**
-   - Build prerequisites and instructions
-   - Project structure
-   - Development guidelines
+### For Contributors
 
-5. **[org.polarion.eclipse.team.svn.connector.javahl21.win64/NATIVE_LIBRARY_GUIDE.md](org.polarion.eclipse.team.svn.connector.javahl21.win64/NATIVE_LIBRARY_GUIDE.md)**
-   - How to obtain native DLL files
-   - Required dependencies
-   - Platform-specific instructions
+**1. Clone Repository:**
+```bash
+git clone [repository-url]
+cd polarion-javahl
+```
 
----
+**2. Build Plugin:**
+```powershell
+# Quick build (connector only)
+cd org.polarion.eclipse.team.svn.connector.javahl21
+.\quick-build.ps1
 
-## 📦 Historical Documentation
+# Full build (all modules + update site)
+cd ..
+.\build-updatesite.ps1
+```
 
-Historical and reference documents have been moved to the **[history/](history/)** folder to keep the root clean. These include:
+**3. Install in Eclipse:**
+- Help → Install New Software → Add → Local
+- Browse to `org.polarion.eclipse.team.svn.connector.javahl21.site\target\repository`
+- Install and restart
 
-- **[history/COMPLETE_FEATURE_IMPLEMENTATION.md](history/COMPLETE_FEATURE_IMPLEMENTATION.md)** - Detailed feature inventory (Nov 14, 2025)
-- **[history/VERIFICATION_REPORT.md](history/VERIFICATION_REPORT.md)** - Initial verification findings (issues now fixed)
-- **[history/OPTIMIZATION_NOTES.md](history/OPTIMIZATION_NOTES.md)** - Thread-local caching implementation details
-- **[history/DEVELOPMENT_SESSION_SUMMARY.md](history/DEVELOPMENT_SESSION_SUMMARY.md)** - Complete development log (Nov 14-15, 2025)
-
-Additional historical documents in subfolders:
-- **[org.polarion.eclipse.team.svn.connector.javahl21/BUILD_SUCCESS.md](org.polarion.eclipse.team.svn.connector.javahl21/BUILD_SUCCESS.md)** - First successful build (Nov 10, 2025)
-- **[org.polarion.eclipse.team.svn.connector.javahl21/BUILD_STATUS.md](org.polarion.eclipse.team.svn.connector.javahl21/BUILD_STATUS.md)** - Build prerequisites reference
-- **[org.polarion.eclipse.team.svn.connector.javahl21/COMPARISON_ARSYSOP.md](org.polarion.eclipse.team.svn.connector.javahl21/COMPARISON_ARSYSOP.md)** - Comparison with SVNKit connector
+**Detailed Instructions:** See [MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md)
 
 ---
 
-## 🎯 Quick Reference by Task
+## Documentation
 
-### "I want to install the connector"
-→ Read [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)
+### Essential Documents (Start Here)
 
-### "I want to understand what this project does"
-→ Read [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)
+**For Users:**
+- **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** - Installation instructions and troubleshooting
 
-### "I need to fix a bug or add a feature"
-→ Read [MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md) - **Critical!**
+**For Contributors/Maintainers:**
+- **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** ⭐ **START HERE** - Complete project overview
+- **[MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md)** ⭐ **CRITICAL** - Build procedures, update workflows
+- **[VALIDATION_PLAN.md](VALIDATION_PLAN.md)** - Validation checklist and testing procedures
+- **[LOCAL_PATHS.md](LOCAL_PATHS.md)** - Development environment paths
 
-### "I want to build from source"
-→ Read [org.polarion.eclipse.team.svn.connector.javahl21/README.md](org.polarion.eclipse.team.svn.connector.javahl21/README.md)
-
-### "I need to update native libraries"
-→ Read [org.polarion.eclipse.team.svn.connector.javahl21.win64/NATIVE_LIBRARY_GUIDE.md](org.polarion.eclipse.team.svn.connector.javahl21.win64/NATIVE_LIBRARY_GUIDE.md)
-
-### "I'm getting a JNI error"
-→ Read [MAINTENANCE_GUIDE.md § Fixing JNI Signature Mismatches](MAINTENANCE_GUIDE.md#fixing-jni-signature-mismatches)
-
-### "I want to see what was fixed"
-→ Read [PROJECT_SUMMARY.md § Build History and Fixes](PROJECT_SUMMARY.md#build-history-and-fixes)
-
-### "I want historical context"
-→ Read documents in [history/](history/) folder
+**Project Information:**
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes
+- **[MIGRATION_TO_REFERENCE.md](MIGRATION_TO_REFERENCE.md)** - Migration to reference implementation details
+- **[history/MIGRATION_HISTORY.md](history/MIGRATION_HISTORY.md)** - Complete migration timeline
 
 ---
 
-## 📊 Documentation Metrics
+## Requirements
 
-| Document | Status | Audience |
-|----------|--------|----------|
-| PROJECT_SUMMARY.md | Current | All users |
-| MAINTENANCE_GUIDE.md | Current | Developers |
-| INSTALLATION_GUIDE.md | Current | End users |
-| history/* (4 docs) | Reference | Historical context |
+### Runtime Requirements
+- Eclipse 2024-12 (or compatible version)
+- Subversive SVN Team Provider 5.1.x
+- Windows x64 (native libraries included)
+- Subversion 1.14.x repository
 
-**Total Current Documentation:** ~2,150 lines, ~18,000 words  
-**Historical Documentation:** Moved to history/ folder
-
----
-
-## 🔄 Document Maintenance
-
-### When to Update Documents
-
-**PROJECT_SUMMARY.md:**
-- Version number changes
-- New features added
-- Bugs fixed
-- Build environment updates
-
-**MAINTENANCE_GUIDE.md:**
-- New maintenance procedures discovered
-- New common issues identified
-- File locations change
-- Architecture changes
-
-**INSTALLATION_GUIDE.md:**
-- Installation process changes
-- New platform support added
-- Troubleshooting solutions found
-
-### Document Review Schedule
-
-- **After each build:** Update version numbers
-- **After fixes:** Update PROJECT_SUMMARY.md with fix details
-- **Monthly:** Review troubleshooting sections
-- **Before major release:** Review all current documentation
+### Build Requirements
+- Java JDK 21 (or later LTS)
+- Apache Maven 3.9.x
+- Git
 
 ---
 
-## 📝 Notes for Future Maintainers
+## Project Structure
 
-### Most Important Documents
-
-If you can only read two documents, read these:
-
-1. **[MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md)** - How to fix things
-2. **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - What has been built
-
-### Key Information Locations
-
-- **Critical file paths:** MAINTENANCE_GUIDE.md § Critical File Locations
-- **JNI signature fixes:** MAINTENANCE_GUIDE.md § Fixing JNI Signature Mismatches
-- **All applied fixes:** PROJECT_SUMMARY.md § Build History and Fixes
-- **Architecture diagram:** MAINTENANCE_GUIDE.md § Architecture Overview
-- **Build commands:** Both README.md files
-
-### What NOT to Change
-
-⚠️ **Critical:** Do NOT add extra constructors to NativeException.java - see MAINTENANCE_GUIDE.md for why
-
-⚠️ **Important:** Always verify JNI signatures against SVN source before changing
-
-⚠️ **Required:** Test every native method after signature changes
+```
+polarion-javahl/
+├── org.polarion.eclipse.team.svn.connector.javahl21/     # Main connector
+│   ├── src/org/apache/subversion/javahl/                # JavaHL (92 classes)
+│   └── src/org/polarion/team/svn/connector/             # Polarion adapter
+├── org.polarion.eclipse.team.svn.connector.javahl21.win64/  # Native libraries
+│   └── native/                                           # DLLs (svnjavahl-1.dll, etc.)
+├── org.polarion.eclipse.team.svn.connector.javahl21.feature/  # Eclipse feature
+└── org.polarion.eclipse.team.svn.connector.javahl21.site/     # Update site
+```
 
 ---
 
-## 🌟 Success Metrics
+## Supported SVN Operations
 
-This project achieved:
-- ✅ 100% feature parity with SVN 1.14.5
-- ✅ 98 source files compiled
-- ✅ 66 native methods with correct JNI signatures
-- ✅ All runtime errors fixed
-- ✅ Production-ready connector
-- ✅ Complete documentation (you're reading it!)
+✅ **Repository Operations:**
+- Checkout projects from SVN
+- Browse repository structure
+- Switch between branches/tags
 
-**Build:** 7.0.0.202511141809  
-**Status:** ✅ Production Ready  
-**Quality:** ✅ Thoroughly tested and verified
+✅ **Working Copy Operations:**
+- Commit changes
+- Update from repository
+- Revert modifications
+- Resolve conflicts
+
+✅ **File Operations:**
+- Add files to version control
+- Delete tracked files
+- Move/rename with history preservation
+- Copy with history
+
+✅ **Advanced Operations:**
+- Create branches and tags
+- Merge changes between branches
+- View revision history and logs
+- Diff files and directories
+- Annotate/blame
+- Lock/unlock files
+- Set and manage properties
 
 ---
 
-*This index created: November 15, 2025*  
-*Keep this file updated as documentation evolves*
+## Architecture
+
+### Components
+
+**1. JavaHL Layer (org.apache.subversion.javahl)**
+- 92 Java classes (100% Apache Subversion 1.14.5 reference)
+- JNI interfaces to native Subversion library
+- Core SVN operations: checkout, commit, update, merge, etc.
+
+**2. Polarion Adapter (org.polarion.team.svn.connector)**
+- Bridge between Subversive and JavaHL
+- Implements Subversive connector interface
+- 6 adapter classes
+
+**3. Native Libraries (win64)**
+- svnjavahl-1.dll (10 MB) - JavaHL native implementation
+- APR/APR-Util - Apache Portable Runtime
+- OpenSSL - Secure communications
+- Berkeley DB, zlib, libsasl - Supporting libraries
+
+### Technology Stack
+- **Language:** Java 21
+- **Build:** Maven 3.9.11 + Tycho 4.0.10
+- **Platform:** Eclipse RCP 4.32 (2024-12)
+- **JNI:** Native code integration
+- **P2:** Eclipse provisioning (update site)
+
+---
+
+## Build Instructions
+
+### Quick Build (Connector Only)
+```powershell
+cd org.polarion.eclipse.team.svn.connector.javahl21
+.\quick-build.ps1
+```
+
+**Output:** `target\org.polarion.eclipse.team.svn.connector.javahl21-7.0.0-SNAPSHOT.jar` (~354 KB)  
+**Time:** ~7-10 seconds
+
+### Full Build (All Modules + Update Site)
+```powershell
+cd D:\users\Jose\development\polarion-javahl
+.\build-updatesite.ps1
+```
+
+**Output:**
+- Connector JAR (~354 KB)
+- Native library JAR (~10 MB)
+- Feature JAR (~2.5 KB)
+- Update site at `org.polarion.eclipse.team.svn.connector.javahl21.site\target\repository`
+
+**Time:** ~10-12 seconds
+
+### Clean Build
+```powershell
+mvn clean
+.\build-updatesite.ps1
+```
+
+**Details:** See [MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md)
+
+---
+
+## Testing
+
+### Manual Testing Checklist
+
+**Basic Operations:**
+- [ ] Checkout project from repository
+- [ ] Commit file changes
+- [ ] Update from repository
+- [ ] Add new file to version control
+- [ ] Delete tracked file
+- [ ] Move/rename file
+
+**Advanced Operations:**
+- [ ] Create branch
+- [ ] Switch to branch
+- [ ] Merge changes
+- [ ] Resolve conflicts
+- [ ] View history/log
+- [ ] Compare (diff) files
+
+**Details:** See [VALIDATION_PLAN.md](VALIDATION_PLAN.md)
+
+---
+
+## Contributing
+
+### Before Committing
+
+**1. Validate Changes:**
+```powershell
+# Run quick validation
+cd org.polarion.eclipse.team.svn.connector.javahl21
+.\quick-build.ps1
+
+# Check build successful
+echo $LASTEXITCODE  # Should be 0
+```
+
+**2. Update Documentation:**
+- Update CHANGELOG.md with changes
+- Update relevant documentation files
+- Add to PROJECT_SUMMARY.md if significant
+
+**3. Test in Eclipse:**
+- Install from local update site
+- Test affected operations
+- Check Eclipse error log
+
+### Code Guidelines
+
+**DO:**
+- ✅ Use reference JavaHL files from Apache Subversion 1.14.5
+- ✅ Preserve JNI method signatures exactly
+- ✅ Include proper `throws` clauses
+- ✅ Document significant changes
+- ✅ Test before committing
+
+**DON'T:**
+- ❌ Modify JavaHL files without comparing to reference
+- ❌ Remove `throws` clauses from JNI methods
+- ❌ Add try-catch blocks that mask exceptions
+- ❌ Change method signatures
+- ❌ Commit untested code
+
+### Git Workflow
+
+```bash
+# Create feature branch
+git checkout -b feature/your-feature
+
+# Make changes
+git add .
+git commit -m "Description of changes"
+
+# Test thoroughly
+.\build-updatesite.ps1
+# [Test in Eclipse]
+
+# Push
+git push origin feature/your-feature
+
+# Create pull request
+```
+
+---
+
+## Troubleshooting
+
+### Build Issues
+
+**Problem:** Maven build fails
+
+**Solution:**
+```powershell
+# Clean build
+mvn clean
+rm -r target
+
+# Check Java version
+java -version  # Should be 21+
+
+# Check Maven version
+mvn -version  # Should be 3.9+
+```
+
+### Runtime Issues
+
+**Problem:** NoSuchMethodError when using SVN operations
+
+**Cause:** JNI signature mismatch (missing `throws` clause)
+
+**Solution:**
+1. Compare affected file to reference: `D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\...`
+2. Replace with reference version
+3. Rebuild connector
+
+**Problem:** UnsatisfiedLinkError - native library not found
+
+**Cause:** Missing or incorrect native libraries
+
+**Solution:**
+1. Check `org.polarion.eclipse.team.svn.connector.javahl21.win64\native\` contains DLLs
+2. Verify svnjavahl-1.dll exists
+3. Rebuild native library module
+
+**Problem:** Eclipse doesn't see connector
+
+**Solution:**
+1. Restart Eclipse with `-clean` flag
+2. Reinstall from update site
+3. Check Window → Preferences → Team → SVN → SVN Connector
+
+**More:** See [MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md) Troubleshooting section
+
+---
+
+## Version Information
+
+**Current Version:** 7.0.0.202511162055
+
+**Version Format:** `MAJOR.MINOR.PATCH.YYYYMMDDHHmmss`
+- Major: 7 (SVN 1.14 series)
+- Minor: 0
+- Patch: 0
+- Qualifier: Build timestamp
+
+**Compatibility:**
+- Subversion: 1.14.x
+- Eclipse: 2024-12 and compatible
+- Java: 21+
+- Platform: Windows x64
+
+**Reference Implementation:**
+- Apache Subversion: 1.14.5
+- JavaHL classes: 92 files (100% match)
+- Last sync: November 16, 2025
+
+---
+
+## License
+
+This project includes:
+
+**JavaHL (Apache License 2.0):**
+- Apache Subversion JavaHL bindings
+- Copyright © Apache Software Foundation
+
+**Polarion Adapter:**
+- Polarion Software
+- See `about.html` for license details
+
+**Native Libraries:**
+- Subversion, APR, OpenSSL: See `about_files/` for individual licenses
+- Multiple open-source licenses (Apache, LGPL, BSD)
+
+**Full License Information:** See `org.polarion.eclipse.team.svn.connector.javahl21/about_files/`
+
+---
+
+## Support
+
+### Documentation
+- **Installation:** [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)
+- **Maintenance:** [MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md)
+- **Validation:** [VALIDATION_PLAN.md](VALIDATION_PLAN.md)
+- **Project Details:** [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)
+
+### External Resources
+- **Subversive:** https://www.eclipse.org/subversive/
+- **Apache Subversion:** https://subversion.apache.org/
+- **Eclipse:** https://www.eclipse.org/
+
+### Issue Reporting
+When reporting issues, include:
+- Eclipse version
+- Connector version
+- SVN server version
+- Operation being performed
+- Eclipse error log (Window → Show View → Error Log)
+- Steps to reproduce
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for complete version history.
+
+**v7.0.0.202511162055 (November 16, 2025):**
+- ✅ Complete migration to SVN 1.14.5 reference implementation
+- ✅ All 92 JavaHL classes now 100% match reference
+- ✅ Fixed NoSuchMethodError in commit operations
+- ✅ Added 50 missing `throws` clauses
+- ✅ Resolved all JNI signature mismatches
+- ✅ Added missing NativeResources.java
+- ✅ Clean, professional documentation package
+
+---
+
+**Project Status:** ✅ Production Ready  
+**Last Updated:** November 16, 2025  
+**Maintained By:** José [GitHub handle if available]
+
+**Quick Links:**
+- [Installation](INSTALLATION_GUIDE.md) | [Maintenance](MAINTENANCE_GUIDE.md) | [Validation](VALIDATION_PLAN.md) | [Changelog](CHANGELOG.md)
