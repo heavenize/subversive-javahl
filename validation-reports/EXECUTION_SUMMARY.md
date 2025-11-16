@@ -10,13 +10,13 @@
 ## Validation Execution
 
 ### Step 1: Prerequisites Check
-✅ SVN 1.14.5 source available at: `D:\Work\code\subversion-1.14.5`  
+✅ SVN 1.14.5 source available at: `<svn-source>`  
 ✅ Reference Java path: `subversion\bindings\javahl\src\org\apache\subversion\javahl`  
 ✅ Our implementation path: `org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl`
 
 ### Step 2: Class Inventory Comparison
 ```powershell
-$refClasses = (Get-ChildItem -Recurse "D:\Work\code\subversion-1.14.5\...\javahl\*.java").Count
+$refClasses = (Get-ChildItem -Recurse "<svn-source>\...\javahl\*.java").Count
 $ourClasses = (Get-ChildItem -Recurse "org.polarion...\javahl\*.java").Count
 ```
 

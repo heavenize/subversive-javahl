@@ -187,7 +187,7 @@ All critical SVN operations have been tested in Eclipse with real repositories a
 ### Manual Validation Commands
 ```powershell
 # Class count comparison
-$refClasses = (Get-ChildItem -Recurse "D:\Work\code\subversion-1.14.5\...\javahl\*.java").Count
+$refClasses = (Get-ChildItem -Recurse "<svn-source>\...\javahl\*.java").Count
 $ourClasses = (Get-ChildItem -Recurse "org.polarion....\javahl\*.java").Count
 
 # Native method count
@@ -232,7 +232,7 @@ The fact that all SVN operations work correctly in Eclipse with real repositorie
 - **Quick Reference:** VALIDATION_QUICK_REFERENCE.md
 - **Maintenance Guide:** MAINTENANCE_GUIDE.md (section 11: Signature Validation)
 - **SVN Reference:** https://subversion.apache.org/docs/api/latest/javahl/
-- **Source Code:** D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\
+- **Source Code:** `<svn-source>\subversion\bindings\javahl\`
 
 ---
 

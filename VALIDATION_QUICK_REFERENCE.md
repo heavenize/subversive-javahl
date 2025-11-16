@@ -28,7 +28,7 @@
 
 ### Run Full Validation:
 ```powershell
-.\validate-javahl.ps1 -SvnSourcePath "D:\Work\code\subversion-1.14.5"
+.\validate-javahl.ps1 -SvnSourcePath "<svn-source>"
 ```
 
 **Output:**
@@ -44,7 +44,7 @@
 
 ### 1. Compare SVNClient.java
 ```powershell
-code --diff "D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\SVNClient.java"
+code --diff "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\SVNClient.java" "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\SVNClient.java"
 ```
 
 ### 2. Extract Native Methods
@@ -54,7 +54,7 @@ Select-String -Path "org.polarion.eclipse.team.svn.connector.javahl21\src\org\ap
 
 ### 3. Compare Callback Interface
 ```powershell
-code --diff "D:\Work\code\subversion-1.14.5\subversion\bindings\javahl\src\org\apache\subversion\javahl\callback\ClientNotifyCallback.java" "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\callback\ClientNotifyCallback.java"
+code --diff "<svn-source>\subversion\bindings\javahl\src\org\apache\subversion\javahl\callback\ClientNotifyCallback.java" "org.polarion.eclipse.team.svn.connector.javahl21\src\org\apache\subversion\javahl\callback\ClientNotifyCallback.java"
 ```
 
 ### 4. Validate Enum Ordinals
