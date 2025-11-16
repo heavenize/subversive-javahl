@@ -29,6 +29,7 @@
 8. [Troubleshooting Guide](#troubleshooting-guide)
 9. [Version Management](#version-management)
 10. [Testing and Validation](#testing-and-validation)
+11. [Signature Validation](#signature-validation)
 
 ---
 
@@ -1023,7 +1024,7 @@ ISVNClient.java          - Interface for Subversive
 1. Always compare with SVN source before changing signatures
 2. Test every JNI method after adding/changing
 3. Keep native library versions in sync (all 1.14.x)
-4. Document all fixes in BUILD_SUCCESS.md or similar
+4. Document all fixes in this MAINTENANCE_GUIDE.md
 5. Use thread-local caching for performance
 6. Validate with real repositories, not just toy examples
 
@@ -1035,6 +1036,54 @@ ISVNClient.java          - Interface for Subversive
 
 ---
 
-*Document Version: 1.0*  
+## Signature Validation
+
+**CRITICAL:** Regular validation of Java signatures against SVN reference prevents JVM crashes.
+
+### When to Validate
+- ✅ Before each major release
+- ✅ When upgrading to new SVN version (e.g., 1.15.x)
+- ✅ After any JNI-related code changes
+- ✅ After any constructor/signature changes
+- ✅ When investigating JVM crashes
+- ✅ Annually as part of code review
+
+### Quick Validation
+See **VALIDATION_QUICK_REFERENCE.md** for quick commands and checklist.
+
+### Comprehensive Validation
+See **VALIDATION_PLAN.md** for complete validation procedures including:
+- All 94 Java class signatures
+- 66 SVNClient native methods
+- 29 callback interfaces
+- JNI binding extraction from C++ code
+- Enum ordinal validation
+- Constructor signature verification
+
+### Run Automated Validation
+```powershell
+# Requires SVN 1.14.5 source code downloaded
+.\validate-javahl.ps1 -SvnSourcePath "<svn-source>"
+```
+
+**Output Reports:**
+- `validation-reports/class-inventory.md` - Missing/extra classes
+- `validation-reports/svnclient-native-methods.md` - Native method comparison
+- `validation-reports/jni-calls.md` - JNI calls from C++ code
+- `validation-reports/method-counts.md` - Method count per class
+
+### Priority Classes to Validate
+1. **SVNClient.java** - 66 native methods (CRITICAL)
+2. **Callback interfaces** - 29 files (HIGH)
+3. **Enums** - Depth, NodeKind, Tristate (HIGH - ordinals must match C++)
+4. **Type classes** - Status, Info, Revision (MEDIUM)
+
+### Known Validation Results
+✅ **ClientNotifyInformation.java** - Constructor signature fixed and validated  
+✅ **All SVN operations** - Working (checkout, update, commit, move, rename)
+
+---
+
+*Document Version: 1.1*  
 *For questions or issues, refer to this guide first, then check SVN source.*  
-*Last Updated: November 15, 2025*
+*Last Updated: November 16, 2025*
