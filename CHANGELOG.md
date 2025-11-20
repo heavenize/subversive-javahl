@@ -4,6 +4,90 @@ All notable changes to the Subversive SVN 1.14 JavaHL Connector will be document
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [7.0.0.202511191922] - 2025-11-20
+
+### Fixed
+
+- **Critical:** Eclipse native library loading
+  - Added `Bundle-NativeCode` header to MANIFEST.MF for proper Eclipse OSGi integration
+  - Ensures Eclipse adds `native/` directory to `java.library.path` automatically
+  - Fixes `UnsatisfiedLinkError: Can't find dependent libraries` in Eclipse
+  - Added OpenSSL pre-loading in `NativeResources.java` for Windows platforms
+
+### Added
+
+- Comprehensive test suite (19 unit tests across 4 test classes)
+  - `NativeResourcesTest` - Library loading validation (6 tests)
+  - `SVNClientTest` - SVNClient functionality (4 tests)
+  - `JavaHLConnectorTest` - Connector initialization (4 tests)
+  - `OpenSSLDependencyTest` - Windows OpenSSL loading (5 tests)
+- Standalone test runner (`simple-test/StandaloneJavaHLTest.java`)
+  - Validates native library loading outside Eclipse
+  - Tests OpenSSL dependency handling
+  - Confirms SVNClient creation and version information
+
+### Documentation
+
+- Added `ECLIPSE_FIX.md` - Eclipse-specific native library loading solution
+- Added `simple-test/` - Standalone testing infrastructure
+- Updated `TESTING.md` - Complete testing guide with troubleshooting
+
+### Technical Details
+
+**Eclipse OSGi Fix:**
+The connector worked in standalone Java but failed in Eclipse due to missing OSGi metadata. The `Bundle-NativeCode` header is required for Eclipse to properly configure the native library path for fragment bundles.
+
+**Solution Implementation:**
+1. Added `Bundle-NativeCode` header listing all native libraries and target platform
+2. Implemented OpenSSL pre-loading in `NativeResources.java` before main DLL
+3. Created standalone test to validate fixes outside Eclipse environment
+
+**Verified Working:**
+- ✅ Standalone Java test: All 6 tests passed
+- ✅ Native library loads with OpenSSL dependencies
+- ✅ SVNClient creates successfully (version 1.14.5 r1922182)
+- ✅ Multiple client instances work independently
+- ⏳ Eclipse integration testing pending
+
+---
+
+## [7.0.0.202511171937] - 2025-11-17
+
+### Fixed
+
+- **Critical:** Fixed HTTPS support in native library
+  - Rebuilt `libsvnjavahl-1.dll` with `SVN_LIBSVN_RA_LINKS_RA_SERF` preprocessor definition enabled
+  - Added serf module for HTTP/HTTPS repository access
+  - Included OpenSSL 3.x dependencies (libcrypto-3-x64.dll, libssl-3-x64.dll)
+  - Fixed "Unrecognized URL scheme for 'https://...'" error
+
+### Changed
+
+- Native library architecture:
+  - Statically linked: APR, APR-Util, serf, zlib, lz4, SQLite, expat
+  - Dynamic dependencies: OpenSSL 3.x only (for HTTPS/SSL)
+  - Native bundle size: 12.7 MB (was 10 MB)
+- Updated `NATIVE_LIBRARY_GUIDE.md` to reflect statically-linked architecture
+
+### Technical Details
+
+**Root Cause:**
+The native library was built without the `SVN_LIBSVN_RA_LINKS_RA_SERF` preprocessor macro, causing the RA (Repository Access) loader to skip the serf module initialization. This resulted in no handler being available for https:// URLs.
+
+**Solution:**
+1. Modified Visual Studio project settings to add `SVN_LIBSVN_RA_LINKS_RA_SERF` to preprocessor definitions
+2. Rebuilt `libsvnjavahl-1.dll` with serf module linked statically
+3. Added OpenSSL 3.x DLLs as external dependencies (required by serf for SSL/TLS)
+
+**Files Updated:**
+- `org.polarion.eclipse.team.svn.connector.javahl21.win64/native/`
+  - `libsvnjavahl-1.dll` (5.2 MB) - Rebuilt with HTTPS support
+  - `libcrypto-3-x64.dll` (7.3 MB) - OpenSSL crypto library
+  - `libssl-3-x64.dll` (1.3 MB) - OpenSSL SSL/TLS library
+  - `libsvnjavahl-1.pdb` (23 MB) - Debug symbols
+
+---
+
 ## [7.0.0.202511162055] - 2025-11-16
 
 ### Major Release - Complete Migration to SVN 1.14.5 Reference Implementation

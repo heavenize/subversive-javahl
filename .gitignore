@@ -34,6 +34,14 @@ org.polarion.eclipse.team.svn.connector.javahl21.site-*.zip
 *.backup
 *~
 
+# Local development files
+temp_*.txt
+*.ps1
+!build-updatesite.ps1
+
+# Test artifacts
+simple-test/*.class
+
 # OS files
 .DS_Store
 Thumbs.db

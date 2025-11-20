@@ -244,6 +244,97 @@ The try-catch made the Java code work, but the JNI signature was wrong. Native c
 | 7.0.0.202511162043 | 2025-11-16 | Fixed CommitInfo + 4 critical files | ✅ Working |
 | 7.0.0.202511162053 | 2025-11-16 | Replaced all 39 remaining files | ✅ Working |
 | 7.0.0.202511162055 | 2025-11-16 | Final update site build | ✅ Production Ready |
+| 7.0.0.202511171937 | 2025-11-17 | Added HTTPS support to native library | ✅ Production Ready |
+
+---
+
+## Phase 5: HTTPS Support Fix (November 17, 2025)
+
+**Issue Discovered:**
+After deploying version 7.0.0.202511162055, HTTPS commit operations failed with error:
+```
+org.apache.subversion.javahl.ClientException: Bad URL passed to RA layer
+svn: Unrecognized URL scheme for 'https://svn.assembla.com/...'
+```
+
+**Root Cause Investigation:**
+
+The error "Unrecognized URL scheme" originates from `subversion\libsvn_ra\ra_loader.c` when the RA (Repository Access) layer cannot find a module to handle the URL scheme.
+
+Analysis of the native library build revealed:
+```c
+// From ra_loader.c
+{
+  "serf",
+  dav_schemes,  // { "http", "https", NULL }
+#ifdef SVN_LIBSVN_RA_LINKS_RA_SERF
+  svn_ra_serf__init,
+  svn_ra_serf__deprecated_init
+#endif
+},
+```
+
+The `libsvnjavahl-1.dll` was built **without** the `SVN_LIBSVN_RA_LINKS_RA_SERF` preprocessor definition, causing:
+- The serf module's `initfunc` to be NULL
+- RA loader to skip the serf module
+- No handler available for https:// URLs
+- "Unrecognized URL scheme" error
+
+**Verification:**
+Examined the Visual Studio project file `libsvnjavahl.vcxproj`:
+```xml
+<PreprocessorDefinitions>
+  WIN64;WIN32;_WINDOWS;alloca=_alloca;_CRT_SECURE_NO_DEPRECATE=;
+  _CRT_NONSTDC_NO_DEPRECATE=;_CRT_SECURE_NO_WARNINGS=;NDEBUG;
+  APR_DECLARE_STATIC;SVN_HAVE_MEMCACHE;APU_DECLARE_STATIC;
+  SVN_INTERNAL_LZ4;SVN_SQLITE_INLINE;SVN_INTERNAL_UTF8PROC;
+  XML_STATIC;%(PreprocessorDefinitions)
+</PreprocessorDefinitions>
+```
+
+**Missing:** `SVN_LIBSVN_RA_LINKS_RA_SERF` - the macro that enables HTTPS support!
+
+**Solution:**
+
+1. **Modified Visual Studio Project:**
+   - Added `SVN_LIBSVN_RA_LINKS_RA_SERF` to preprocessor definitions
+   - Verified serf library is statically linked
+
+2. **Rebuilt Native Library:**
+   - Rebuilt `libsvnjavahl-1.dll` (5.2 MB) with serf module enabled
+   - Statically linked: APR, APR-Util, serf, zlib, lz4, SQLite, expat
+   - Dynamic dependencies: OpenSSL 3.x only
+
+3. **Added OpenSSL Dependencies:**
+   - `libcrypto-3-x64.dll` (7.3 MB) - Cryptographic functions
+   - `libssl-3-x64.dll` (1.3 MB) - SSL/TLS protocol
+   - Required by serf for HTTPS communication
+
+4. **Updated Connector:**
+   - Copied new DLLs to `org.polarion.eclipse.team.svn.connector.javahl21.win64/native/`
+   - Updated `NATIVE_LIBRARY_GUIDE.md` documentation
+   - Rebuilt connector and update site
+
+**Technical Details:**
+
+The serf module provides HTTP/HTTPS repository access via:
+- Apache serf library (embedded in libsvnjavahl-1.dll)
+- OpenSSL 3.x for SSL/TLS (external DLLs)
+- Implements `ra_serf` protocol handler
+
+**Files Updated:**
+- Visual Studio project: Added preprocessor definition
+- Native DLLs: libsvnjavahl-1.dll, libcrypto-3-x64.dll, libssl-3-x64.dll
+- Documentation: NATIVE_LIBRARY_GUIDE.md
+- Build artifacts: connector JAR, update site
+
+**Testing:**
+- HTTPS URLs now recognized by RA layer
+- SSL/TLS communication via OpenSSL 3.x
+- Commit, checkout, update operations work with https:// repositories
+
+**Result:**
+Version 7.0.0.202511171937 with full HTTPS support deployed.
 
 ---
 
@@ -271,13 +362,16 @@ The try-catch made the Java code work, but the JNI signature was wrong. Native c
 
 ## Conclusion
 
-The migration from an incomplete, partially-customized implementation to a 100% reference-based implementation eliminates all potential JNI binding errors and ensures complete compatibility with Apache Subversion 1.14.5.
+The migration from an incomplete, partially-customized implementation to a 100% reference-based implementation with full HTTPS support eliminates all potential JNI binding errors and ensures complete compatibility with Apache Subversion 1.14.5.
 
 **Key Metrics:**
-- 43 files replaced
-- 50 throws clauses added
-- 1 new file added (NativeResources)
+- 43 files replaced (Phase 4)
+- 50 throws clauses added (Phase 4)
+- 1 new file added (NativeResources, Phase 4)
 - 0 customizations lost (none existed)
-- 100% reference compliance achieved
+- 100% reference compliance achieved (Phase 4)
+- HTTPS support enabled (Phase 5)
+- 2 OpenSSL DLLs added for SSL/TLS (Phase 5)
 
-The connector is now production-ready with complete confidence in its compatibility with SVN 1.14.5 native libraries.
+**Final Status:**
+The connector is now production-ready with complete confidence in its compatibility with SVN 1.14.5 native libraries and full support for HTTP/HTTPS repository access.

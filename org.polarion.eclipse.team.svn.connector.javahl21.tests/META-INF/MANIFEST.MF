@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Subversive SVN 1.14 JavaHL Connector Tests
+Bundle-SymbolicName: org.polarion.eclipse.team.svn.connector.javahl21.tests
+Bundle-Version: 7.0.0.qualifier
+Fragment-Host: org.polarion.eclipse.team.svn.connector.javahl21
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Bundle: org.junit.jupiter.api;bundle-version="5.10.0",
+ org.junit.jupiter.engine;bundle-version="5.10.0"

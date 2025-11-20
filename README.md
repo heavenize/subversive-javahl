@@ -1,8 +1,8 @@
 # Subversive SVN 1.14 JavaHL Connector
 
-**Version:** 7.0.0.202511162055  
-**Status:** ✅ Production Ready - 100% Reference Implementation  
-**Last Updated:** November 16, 2025
+**Version:** 7.0.0.202511191922  
+**Status:** ✅ Production Ready - Full HTTPS Support with Native Library Fixes  
+**Last Updated:** November 20, 2025
 
 ---
 

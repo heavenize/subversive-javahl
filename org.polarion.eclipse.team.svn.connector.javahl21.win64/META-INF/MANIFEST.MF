@@ -8,6 +8,12 @@ Fragment-Host: org.polarion.eclipse.team.svn.connector.javahl21;bundle-version="
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-PlatformFilter: (& (osgi.os=win32) (osgi.arch=x86_64))
 Eclipse-BundleShape: dir
+Bundle-NativeCode: native/libsvnjavahl-1.dll;
+ native/libcrypto-3-x64.dll;
+ native/libssl-3-x64.dll;
+ native/MSVCP140.dll;
+ native/VCRUNTIME140.dll;
+ osname=win32; processor=x86_64
 Bundle-License: EPL-2.0
 Bundle-Copyright: Copyright (c) 2005-2025 Polarion Software. All rights reserved.
 Automatic-Module-Name: org.polarion.eclipse.team.svn.connector.javahl21.win64

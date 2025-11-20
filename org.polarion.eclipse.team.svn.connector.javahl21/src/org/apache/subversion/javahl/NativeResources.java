@@ -80,6 +80,34 @@ public class NativeResources
     {
         UnsatisfiedLinkError loadException = null;
 
+        // Pre-load OpenSSL dependencies on Windows
+        // This is required because libsvnjavahl-1.dll depends on OpenSSL 3.x,
+        // and System.loadLibrary() doesn't automatically load dependencies
+        // from the same directory as the main DLL in Eclipse plugin environments.
+        if (System.getProperty("os.name").toLowerCase().contains("win"))
+        {
+            try
+            {
+                // Try to load OpenSSL crypto library first
+                System.loadLibrary("libcrypto-3-x64");
+            }
+            catch (UnsatisfiedLinkError ex)
+            {
+                // OpenSSL not found - might be using static build or system OpenSSL
+                // Continue anyway, as libsvnjavahl-1.dll might work without it
+            }
+            
+            try
+            {
+                // Try to load OpenSSL SSL/TLS library
+                System.loadLibrary("libssl-3-x64");
+            }
+            catch (UnsatisfiedLinkError ex)
+            {
+                // OpenSSL not found - continue anyway
+            }
+        }
+
         // If the user specified the fully qualified path to the
         // native library, try loading that first.
         try
