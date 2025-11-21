@@ -23,6 +23,7 @@
     <modules>
         <module>org.polarion.eclipse.team.svn.connector.javahl21</module>
         <module>org.polarion.eclipse.team.svn.connector.javahl21.win64</module>
+        <module>org.polarion.eclipse.team.svn.connector.javahl21.tests</module>
         <module>org.polarion.eclipse.team.svn.connector.javahl21.feature</module>
         <module>org.polarion.eclipse.team.svn.connector.javahl21.site</module>
     </modules>

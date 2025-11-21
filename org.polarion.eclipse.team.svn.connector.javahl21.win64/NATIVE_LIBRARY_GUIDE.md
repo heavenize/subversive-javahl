@@ -11,35 +11,20 @@
 ## Overview
 This guide explains how to obtain and update the native DLL files bundled in the JavaHL Windows x64 connector.
 
-## Currently Bundled (22 files, ~6 MB)
+## Currently Bundled (6 files, ~14 MB)
 The plugin includes these DLL files in `native/`:
 
 ### Microsoft Visual C++ Runtime (2 files)
-- VCRUNTIME140.dll
-- MSVCP140.dll
+- VCRUNTIME140.dll (124 KB)
+- MSVCP140.dll (557 KB)
 
-### Apache Portable Runtime (3 files)
-- libapr-1.dll
-- libapriconv-1.dll
-- libaprutil-1.dll
+### OpenSSL 3.x (2 files) - **Required for HTTPS support**
+- libcrypto-3-x64.dll (7.3 MB)
+- libssl-3-x64.dll (1.3 MB)
 
-### OpenSSL 3.x (2 files) - **Updated from 1.1.x**
-- libcrypto-3-x64.dll
-- libssl-3-x64.dll
-
-### SASL (1 file)
-- libsasl.dll
-
-### Apache Subversion 1.14 (8 files)
-- libsvn_client-1.dll
-- libsvn_delta-1.dll
-- libsvn_diff-1.dll
-- libsvn_fs-1.dll
-- libsvn_ra-1.dll
-- libsvn_repos-1.dll
-- libsvn_subr-1.dll
-- libsvn_wc-1.dll
-- libsvnjavahl-1.dll
+### Apache Subversion 1.14.5 JavaHL (2 files) - **Statically linked**
+- libsvnjavahl-1.dll (5.2 MB) - Includes all SVN libraries, APR, serf, zlib, lz4, SQLite, etc.
+- libsvnjavahl-1.pdb (23 MB) - Debug symbols (optional)
 
 ---
 

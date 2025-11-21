@@ -1,8 +1,8 @@
 # Maintenance Guide
 
 **Project:** Subversive SVN 1.14 JavaHL Connector  
-**Version:** 7.0.0.202511162055  
-**Last Updated:** November 16, 2025
+**Version:** 7.0.0.202511171937  
+**Last Updated:** November 17, 2025
 
 ---
 
@@ -380,7 +380,42 @@ $new = "D:\Work\code\subversion-1.14.6\subversion\bindings\javahl\src"
 **Solution:**
 1. Check native libraries in win64 module
 2. Verify PATH includes native library location
-3. Check svnjavahl-1.dll exists
+3. Check libsvnjavahl-1.dll exists and OpenSSL DLLs are present
+
+**Problem:** Unrecognized URL scheme for 'https://...'
+
+**Cause:** Native library built without HTTPS support (serf module disabled)
+
+**Solution:**
+1. Rebuild libsvnjavahl-1.dll with `SVN_LIBSVN_RA_LINKS_RA_SERF` preprocessor definition
+2. Ensure serf library is statically linked
+3. Include OpenSSL 3.x DLLs (libcrypto-3-x64.dll, libssl-3-x64.dll)
+4. Rebuild connector and update site
+
+**Detailed Steps for HTTPS Fix:**
+```powershell
+# 1. Open Visual Studio solution
+Start-Process "D:\Work\code\subversion-1.14.5\build\win32\subversion_vcnet.sln"
+
+# 2. Find libsvnjavahl project
+# 3. Right-click → Properties → All Configurations
+# 4. C/C++ → Preprocessor → Preprocessor Definitions
+# 5. Add: SVN_LIBSVN_RA_LINKS_RA_SERF
+# 6. Build → Rebuild Solution
+
+# 7. Copy new DLL to connector
+Copy-Item "D:\Work\code\subversion-1.14.5\Release\subversion\bindings\javahl\native\libsvnjavahl-1.dll" `
+          "org.polarion.eclipse.team.svn.connector.javahl21.win64\native\" -Force
+
+# 8. Copy OpenSSL DLLs (from deps\openssl or system)
+Copy-Item "D:\Work\code\deps\openssl\bin\libcrypto-3-x64.dll" `
+          "org.polarion.eclipse.team.svn.connector.javahl21.win64\native\" -Force
+Copy-Item "D:\Work\code\deps\openssl\bin\libssl-3-x64.dll" `
+          "org.polarion.eclipse.team.svn.connector.javahl21.win64\native\" -Force
+
+# 9. Rebuild connector
+.\build-updatesite.ps1
+```
 
 **Problem:** Eclipse doesn't see connector
 

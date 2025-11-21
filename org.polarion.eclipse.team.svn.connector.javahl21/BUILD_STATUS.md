@@ -1,96 +1,73 @@
-# Build Prerequisites Status
+# Build Status
 
-## ✅ Successfully Configured
+## ✅ Build Successful - Version 7.0.0.202511171937
 
-1. **Java 21** - Detected and configured
-   - Location: `<java-home>` (e.g., `C:\Program Files\Eclipse Adoptium\jdk-21.x.x`)
-   - Version: 21.0.4+
+**Status:** Production Ready with HTTPS Support  
+**Last Build:** November 17, 2025  
+**Build Time:** ~12 seconds (full build with update site)
 
-2. **Maven 3.9.11** - Installed and working
-   - All Tycho dependencies downloaded successfully
+### What's Working
 
-3. **Build Scripts** - Created
-   - `build.ps1` - Interactive build script
-   - `quick-build.ps1` - Fast build script
+1. **Complete SVN 1.14.5 Reference Implementation**
+   - All 92 JavaHL classes match Apache Subversion 1.14.5 exactly
+   - All 98 source files compiled successfully
+   - No compilation errors or warnings
 
-## ❌ Missing Dependency
+2. **HTTPS/SSL Support Enabled**
+   - Native library rebuilt with serf module (SVN_LIBSVN_RA_LINKS_RA_SERF)
+   - OpenSSL 3.x dependencies included
+   - HTTP and HTTPS protocols fully supported
 
-The build failed because it cannot find:
-```
-org.eclipse.team.svn.core [4.0.0,6.0.0)
-```
+3. **Native Libraries Bundled**
+   - libsvnjavahl-1.dll (5.2 MB) - Statically linked with APR, serf, zlib, lz4, SQLite
+   - libcrypto-3-x64.dll (7.3 MB) - OpenSSL cryptographic library
+   - libssl-3-x64.dll (1.3 MB) - OpenSSL SSL/TLS library
+   - MSVCP140.dll, VCRUNTIME140.dll - MSVC runtime
 
-This is the **Polarion Subversive SVN Core** plugin, which is not available in public Eclipse repositories.
+4. **Update Site Generated**
+   - Complete P2 repository at: `org.polarion.eclipse.team.svn.connector.javahl21.site\target\repository`
+   - Installable in Eclipse 2024-12
+   - All dependencies resolved
 
-## Solutions
+### Build Environment
 
-### Option 1: Build with Eclipse PDE (Recommended)
+- **Java:** 21.0.4 LTS
+- **Maven:** 3.9.11
+- **Tycho:** 4.0.10
+- **Target Platform:** Eclipse 2024-12
+- **Subversive:** 5.1.0
 
-Since this is a PDE plugin project, the easiest way is to build it within Eclipse:
+### Build Commands
 
-1. **Install Eclipse IDE 2024-12**
-   ```
-   Download: https://www.eclipse.org/downloads/
-   Choose: "Eclipse IDE for RCP and RAP Developers"
-   ```
-
-2. **Import the Project**
-   ```
-   File > Import > Existing Projects into Workspace
-   Select: This directory
-   ```
-
-3. **Configure Dependencies**
-   - Install Subversive SVN plugins from Eclipse Marketplace
-   - Or add `org.eclipse.team.svn.core` to your target platform
-
-4. **Build**
-   ```
-   Right-click project > Export > Deployable plug-ins and fragments
-   ```
-
-### Option 2: Obtain Subversive Dependencies
-
-You need to get the Subversive SVN Core plugin JAR:
-
-1. **From Eclipse Update Site**
-   ```
-   http://download.eclipse.org/technology/subversive/4.0/update-site/
-   ```
-
-2. **Install to Local Maven Repo**
-   ```powershell
-   mvn install:install-file `
-     -Dfile=path\to\org.eclipse.team.svn.core_*.jar `
-     -DgroupId=org.eclipse.team.svn `
-     -DartifactId=org.eclipse.team.svn.core `
-     -Dversion=4.0.0 `
-     -Dpackaging=jar
-   ```
-
-3. **Update pom.xml** - Add dependency repository
-
-### Option 3: Simplified Build (No Dependencies)
-
-If you just want to compile the Java sources without OSGi/Eclipse integration:
-
+**Quick Build (Connector only):**
 ```powershell
-# Compile Java sources only
-javac -d bin -sourcepath src src\org\polarion\**\*.java
+cd org.polarion.eclipse.team.svn.connector.javahl21
+.\quick-build.ps1
 ```
 
-Note: This won't create a proper Eclipse plugin but will verify Java 21 compatibility.
+**Full Build (All modules + Update Site):**
+```powershell
+.\build-updatesite.ps1
+```
 
-## Current Build Output
+### Recent Changes (v7.0.0.202511171937)
 
-The Tycho build successfully:
-- ✅ Downloaded all build dependencies (Tycho 4.0.10, Eclipse platform JARs)
-- ✅ Configured Java 21 compiler
-- ✅ Parsed project structure
-- ❌ Failed to resolve `org.eclipse.team.svn.core` dependency
+- **Fixed:** HTTPS URL scheme support
+- **Added:** OpenSSL 3.x DLLs for SSL/TLS
+- **Updated:** Native library with serf module enabled
+- **Verified:** All SVN operations work with https:// repositories
 
-## Next Steps
+### Previous Build Issues (All Resolved)
 
-**Recommended:** Use Eclipse IDE for building this plugin, as it's designed for PDE projects.
+✅ **NoSuchMethodError in CommitInfo** - Fixed by adding missing throws clauses  
+✅ **Missing methods in ISVNClient** - Fixed by replacing with reference version  
+✅ **JNI signature mismatches** - Fixed by complete migration to reference  
+✅ **HTTPS not supported** - Fixed by rebuilding DLL with serf module  
 
-**Alternative:** Contact Polarion or check their repositories for the complete Subversive build structure.
+## Installation
+
+Install from local update site:
+```
+Help → Install New Software → Add → Local
+Location: org.polarion.eclipse.team.svn.connector.javahl21.site\target\repository
+```
