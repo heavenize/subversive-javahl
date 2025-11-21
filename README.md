@@ -76,15 +76,13 @@ cd ..
 - **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** - Installation instructions and troubleshooting
 
 **For Contributors/Maintainers:**
-- **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** ⭐ **START HERE** - Complete project overview
-- **[MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md)** ⭐ **CRITICAL** - Build procedures, update workflows
-- **[VALIDATION_PLAN.md](VALIDATION_PLAN.md)** - Validation checklist and testing procedures
-- **[LOCAL_PATHS.md](LOCAL_PATHS.md)** - Development environment paths
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** ⭐ **START HERE** - Development setup, build procedures, and contribution guidelines
+- **[TESTING.md](TESTING.md)** - Testing procedures (standalone and Eclipse integration)
+- **[MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md)** - Build workflows and troubleshooting
 
 **Project Information:**
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes
-- **[MIGRATION_TO_REFERENCE.md](MIGRATION_TO_REFERENCE.md)** - Migration to reference implementation details
-- **[history/MIGRATION_HISTORY.md](history/MIGRATION_HISTORY.md)** - Complete migration timeline
+- **[history/MIGRATION_HISTORY.md](history/MIGRATION_HISTORY.md)** - Complete migration timeline and technical details
 
 ---
 
@@ -232,7 +230,7 @@ mvn clean
 - [ ] View history/log
 - [ ] Compare (diff) files
 
-**Details:** See [VALIDATION_PLAN.md](VALIDATION_PLAN.md)
+**Details:** See [TESTING.md](TESTING.md)
 
 ---
 
@@ -253,7 +251,7 @@ echo $LASTEXITCODE  # Should be 0
 **2. Update Documentation:**
 - Update CHANGELOG.md with changes
 - Update relevant documentation files
-- Add to PROJECT_SUMMARY.md if significant
+- Follow [CONTRIBUTING.md](CONTRIBUTING.md) guidelines
 
 **3. Test in Eclipse:**
 - Install from local update site
