@@ -4,7 +4,7 @@ All notable changes to the Subversive SVN 1.14 JavaHL Connector will be document
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [7.0.0.202511191922] - 2025-11-20
+## [7.0.0] - 2025-11-22
 
 ### Fixed
 

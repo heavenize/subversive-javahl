@@ -90,11 +90,11 @@ Check that DLLs are present:
 
 **"Unrecognized URL scheme for 'https://'"**
 - Native library doesn't have serf module
-- Use version 7.0.0.202511191922 or later
+- Use version 7.0.0 or later
 
 **"Can't find dependent libraries"**
 - Bundle-NativeCode header missing
-- Use version 7.0.0.202511191922 or later
+- Use version 7.0.0 or later
 
 **"Native library version must be at least 1.14.0"**
 - Wrong version of native library

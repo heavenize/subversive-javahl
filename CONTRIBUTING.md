@@ -114,7 +114,7 @@ Related to #124
 
 This project uses [Semantic Versioning](https://semver.org/):
 - **MAJOR.MINOR.PATCH.TIMESTAMP**
-- Example: `7.0.0.202511191922`
+- Example: `7.0.0`
 
 Timestamp format: `YYYYMMDDHHmm` (UTC)
 
@@ -144,7 +144,7 @@ Timestamp format: `YYYYMMDDHHmm` (UTC)
 2. Update CHANGELOG.md with release notes
 3. Update README.md version badge
 4. Build update site: `mvn clean install`
-5. Tag release: `git tag v7.0.0.202511191922`
+5. Tag release: `git tag v7.0.0`
 6. Push: `git push origin master --tags`
 7. Create GitHub release with update site ZIP
 
